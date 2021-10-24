@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces {
     public interface IKlantRepository {
-        void VoegKlantToe(Klant klant);
-        bool BestaatKlant(Klant klant);
-        void VerwijderKlant(Klant klant);
-        void UpdateKlant(Klant klant);
-        void GetKlant(int id);
-        List<Klant> SelecteerKlanten();
+        void VoegBestellingToe(Bestelling bestelling);
+        bool BestaatBestelling(Bestelling bestelling);
+        void VerwijderBestelling(Bestelling bestelling);
+        void UpdateBestelling(Bestelling bestelling);
+        void GetBestelling(int id);
+        List<Bestelling> SelecteerBestellingen();
+
+        Klant GetBestellingFromSpecificKlant(Klant klant);
     }
 }

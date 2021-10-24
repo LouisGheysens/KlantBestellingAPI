@@ -9,51 +9,63 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Managers {
     public class KlantManager : IKlantRepository {
+
         private IKlantRepository repo;
 
-        public KlantManager(IKlantRepository repo) {
-            this.repo = repo;
-        }
-        public bool BestaatKlant(Klant klant) {
-            if (klant.KlantID <= 0) {
+        public KlantManager(IKlantRepository repo) { this.repo = repo; }
+
+
+        public bool BestaatBestelling(Bestelling bestelling) {
+            if (bestelling == null) throw new BestellingException("Klant - BestaatBestelling - Bestelling is null!");
+            if (bestelling.BestellingID <= 0) return false;
+            else
                 return false;
-            }
-            else {
-                return true;
-            }
         }
 
-        public void GetKlant(int id) {
-            if (id <= 0) throw new KlantException("Klant - GetKlant - Klant is null");
+        public void GetBestelling(int id) {
+            if (id <= 0) throw new BestellingException("Klant - GetBestelling - Bestelling is null");
             else
-                GetKlant(id);
+                repo.GetBestelling(id);
         }
 
-        public List<Klant> SelecteerKlanten() {
-            return repo.SelecteerKlanten();
+        public Klant GetBestellingFromSpecificKlant(Klant klant) {
+            return repo.GetBestellingFromSpecificKlant(klant);
         }
 
-        public void UpdateKlant(Klant klant) {
-            if (klant == null) throw new KlantException("Klant - UpdateKlant - Klant is null");
-            if (!repo.BestaatKlant(klant)) throw new KlantException("Klant - UpdateKlant - Klant bestaat niet");
-            else
-                repo.UpdateKlant(klant);
+        public List<Bestelling> SelecteerBestellingen() {
+            return repo.SelecteerBestellingen();
         }
 
-        public void VerwijderKlant(Klant klant) {
-            if (klant == null) throw new KlantException("Klant - VerwijderenKlant - Klant is null");
-            if (!repo.BestaatKlant(klant)) throw new KlantException("Klant - VerwijderenKlant - Klant bestaat niet");
-            else
-                repo.VerwijderKlant(klant);
-        }
-
-        public void VoegKlantToe(Klant klant) {
+        public void UpdateBestelling(Bestelling bestelling) {
             try {
-                if (klant == null) throw new KlantException("Klant - VoegKlantToe - Klant is null");
-                if (repo.BestaatKlant(klant)) throw new KlantException("Klant - VoegKlantToe - Klant bestaat al");
-                else {
-                    repo.VoegKlantToe(klant);
-                }
+                if (bestelling == null) throw new BestellingException("Klant - UpdateBestelling - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - UpdateBestelling - Bestelling bestaat niet");
+                else
+                    repo.UpdateBestelling(bestelling);
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void VerwijderBestelling(Bestelling bestelling) {
+            try {
+                if (bestelling == null) throw new BestellingException("Klant - VerwijderBestellingToe - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VerwijderBestelling - Bestelling bestaat niet");
+                else
+                    repo.VerwijderBestelling(bestelling);
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void VoegBestellingToe(Bestelling bestelling) {
+            try {
+                if (bestelling == null) throw new BestellingException("Klant - VoegBestellingToe - Bestelling is null!");
+                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VoegBestellingToe - Bestelling bestaat al");
+                else
+                    repo.VoegBestellingToe(bestelling);
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);

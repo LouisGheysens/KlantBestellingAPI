@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,53 +13,46 @@ namespace BusinessLayer.Managers {
 
         public BestellingManager(IBestellingRepository repo) { this.repo = repo; }
 
-        public bool BestaatBestelling(Bestelling bestelling) {
-            if (bestelling == null) throw new BestellingException("Bestelling - BestaatBestelling - Bestelling is null!");
-            if (bestelling.BestellingID <= 0) return false;
-            else
+        public bool BestaatKlant(Klant klant) {
+            if (klant.KlantID <= 0) {
                 return false;
+            }
+            else {
+                return true;
+            }
         }
 
-        public void GetBestelling(int id) {
-            if (id <= 0) throw new BestellingException("Bestelling - GetBestelling - Bestelling is null");
+        public void GetKlant(int id) {
+            if (id <= 0) throw new KlantException("Bestelling - GetKlant - Klant is null");
             else
-                repo.GetBestelling(id);
+                GetKlant(id);
         }
 
-        public List<Bestelling> SelecteerBestellingen() {
-            return repo.SelecteerBestellingen();
+        public List<Klant> SelecteerKlanten() {
+            return repo.SelecteerKlanten();
         }
 
-        public void UpdateBestelling(Bestelling bestelling) {
+        public void UpdateKlant(Klant klant) {
+            if (klant == null) throw new KlantException("Bestelling - UpdateKlant - Klant is null");
+            if (!repo.BestaatKlant(klant)) throw new KlantException("Bestelling - UpdateKlant - Klant bestaat niet");
+            else
+                repo.UpdateKlant(klant);
+        }
+
+        public void VerwijderKlant(Klant klant) {
+            if (klant == null) throw new KlantException("Bestelling - VerwijderenKlant - Klant is null");
+            if (!repo.BestaatKlant(klant)) throw new KlantException("Bestelling - VerwijderenKlant - Klant bestaat niet");
+            else
+                repo.VerwijderKlant(klant);
+        }
+
+        public void VoegKlantToe(Klant klant) {
             try {
-                if (bestelling == null) throw new BestellingException("Bestelling - UpdateBestelling - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - UpdateBestelling - Bestelling bestaat niet");
-                else
-                    repo.UpdateBestelling(bestelling);
-            }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        public void VerwijderBestelling(Bestelling bestelling) {
-            try {
-                if (bestelling == null) throw new BestellingException("Bestelling - VerwijderBestellingToe - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - VerwijderBestelling - Bestelling bestaat niet");
-                else
-                    repo.VerwijderBestelling(bestelling);
-            }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        public void VoegBestellingToe(Bestelling bestelling) {
-            try {
-                if (bestelling == null) throw new BestellingException("Bestelling - VoegBestellingToe - Bestelling is null!");
-                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - VoegBestellingToe - Bestelling bestaat al");
-                else
-                    repo.VoegBestellingToe(bestelling);
+                if (klant == null) throw new KlantException("Bestelling - VoegKlantToe - Klant is null");
+                if (repo.BestaatKlant(klant)) throw new KlantException("Bestelling - VoegKlantToe - Klant bestaat al");
+                else {
+                    repo.VoegKlantToe(klant);
+                }
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
