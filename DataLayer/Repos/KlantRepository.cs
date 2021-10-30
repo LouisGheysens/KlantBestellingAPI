@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLayer;
+using BusinessLayer.Enums;
+using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models;
 using Microsoft.Data.SqlClient;
@@ -18,41 +21,55 @@ namespace DataLayer.Repos {
                 try {
                     bool result = false;
                     cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
 
                     cmd.Parameters.Add(new SqlParameter("@Naam", System.Data.SqlDbType.NVarChar));
-                    cmd.Parameters["@naam"].Value = klant.Naam;
+                    cmd.Parameters["@Naam"].Value = klant.Naam;
 
                     cmd.Parameters.Add(new SqlParameter("@Adres", System.Data.SqlDbType.NVarChar));
-                    cmd.Parameters["@adres"].Value = klant.Adres;
+                    cmd.Parameters["@Adres"].Value = klant.Adres;
 
                     Console.WriteLine();
                     result = (int)cmd.ExecuteScalar() == 1 ? true : false;
                     return result;
-                    Console.WriteLine("BestaatKlant - Geslaagd");
                 }
                 catch (Exception ex) {
                     throw new Exception(ex.Message);
-                    Console.WriteLine("BestaatKlant - Niet geslaagd");
                 }
             }
         }
 
         public void GetKlant(int id) {
-            SqlConnection conn = DBConnection.CreateConnection();
-            string query = "SELECT * FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @id";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
+            SqlConnection connection = DBConnection.CreateConnection();
+            string query = "SELECT * FROM dbo.Klanten k LEFT JOIN dbo.Bestellingen b ON k.BestellingId=b.Id WHERE Id=@Id";
+            using (SqlCommand command = connection.CreateCommand()) {
                 try {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@KlantId"].Value = id;
-                    Console.WriteLine("GetKlant - geslaagd!");
+                    command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int));
+                    command.Parameters["@Id"].Value = id;
+                    command.CommandText = query;
+                    connection.Open();
+                    Klant klant = null;
+                    Bestelling bestelling = null;
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read()) {
+                        if (klant == null) {
+                            string naam = (string)reader["Naam"];
+                            string adres = (string)reader["Adres"];
+                            klant = new Klant(id, naam, adres);
+                        }
+                        if (!reader.IsDBNull(reader.GetOrdinal("Id"))) {
+                            int aantal = (int)reader["Aantal"];
+                            string product = (string)reader["Product"];
+                            bestelling = new Bestelling(aantal, klant, (Bier)Enum.Parse(typeof(Enum), product));
+                        }
+                        klant.VoegBestellingToe(bestelling);
+                    }
+                    return klant;
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("GetKlant - Niet geslaagd");
+                    throw new KlantRepositoryADOException("KlantRepository- GetKlant", ex);
+                }
+                finally {
+                    connection.Close();
                 }
             }
         }
@@ -63,19 +80,24 @@ namespace DataLayer.Repos {
 
         public void UpdateKlant(Klant klant) {
             var conn = DBConnection.CreateConnection();
-            conn.Open();
-            SqlCommand comm = new SqlCommand($"update Klanten set KlantId= '" + klant.KlantID + "', Naam= " + klant.Naam + " , Adres=' " + klant.Adres + "' where Naam = " + klant.Naam + "", conn);
-            try {
-                comm.ExecuteNonQuery();
-                Console.WriteLine("Klant is bewerkt!");
-
-            }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Klant werd niet bewerkt!");
-            }
-            finally {
-                conn.Close();
+            string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE KlantId=@KlantId";
+            using(SqlCommand cmd = conn.CreateCommand()) {
+                try {
+                    conn.Open();
+                    cmd.Parameters.Add("@KlantId", SqlDbType.Int);
+                    cmd.Parameters.Add("@Naam", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Adres", SqlDbType.NVarChar);
+                    cmd.CommandText = query;
+                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
+                    cmd.Parameters["@Naam"].Value = klant.Naam;
+                    cmd.Parameters["@Adres"].Value = klant.Adres;
+                    cmd.ExecuteNonQuery();
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: UpdateKlant - gefaald!");
+                }
+                finally {
+                    conn.Close();
+                }
             }
         }
 

@@ -21,27 +21,10 @@ namespace BusinessLayer {
             ZetId(id);
             this.Product = product;
             ZetAantal(aantal);
-            ZetKlant(k);
         }
         public void ZetId(int id) {
             if (id <= 0) throw new BestellingException("Bestelling - ZetId - ID is 0!");
             this.BestellingID = id;
-        }
-
-        public void VerwijderKlant() {
-            this.Klant = null;
-        }
-
-        public void ZetKlant(Klant newKlant) {
-            if (newKlant == null) throw new KlantException("Bestelling - invalid klant");
-            if (newKlant == Klant) throw new KlantException("Bestelling- ZetKlant - not new");
-            if (Klant != null) {
-                if (Klant.HeeftBestelling(this))
-                    Klant.VerwijderBestelling(this);
-                if (!newKlant.HeeftBestelling(this))
-                    newKlant.VoegBestellingToe(this);
-                Klant = newKlant;
-            }
         }
 
         public void ZetAantal(int aantal) {
@@ -50,7 +33,7 @@ namespace BusinessLayer {
         }
 
         public override string ToString() {
-            return $"ID: {BestellingID}\nProduct: {Product}\nKlant: {Klant}\n Drank: {Product}\nAantal: {Aantal}";
+            return $"ID: {BestellingID}\nKlant: {Klant}\n Drank: {Product}\nAantal: {Aantal}";
         }
 
         public override bool Equals(object obj) {
