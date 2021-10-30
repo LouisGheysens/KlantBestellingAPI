@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces {
     public interface IBestellingRepository {
-        void VoegKlantToe(Klant klant);
-        bool BestaatKlant(Klant klant);
-        void VerwijderKlant(Klant klant);
-        void UpdateKlant(Klant klant);
-        void GetKlant(int id);
-        List<Klant> SelecteerKlanten();
+
+        void VoegBestellingToe(Bestelling bestelling);
+        bool BestaatBestelling(Bestelling bestelling);
+        void VerwijderBestelling(Bestelling bestelling);
+        void UpdateBestelling(Bestelling bestelling);
+        void GetBestelling(int id);
+        List<Bestelling> SelecteerBestellingen(int klantId);
+        Klant GetBestellingFromSpecificKlant(Klant klant);
     }
+
+
 }
