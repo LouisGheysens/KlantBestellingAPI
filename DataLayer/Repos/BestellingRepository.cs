@@ -1,8 +1,11 @@
 ﻿using BusinessLayer;
+using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +20,6 @@ namespace DataLayer.Repos {
                 try {
                     bool result = false;
                     cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@BestelID", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@BestelID"].Value = bestelling.BestellingID;
 
                     cmd.Parameters.Add(new SqlParameter("@Product", System.Data.SqlDbType.NVarChar));
                     cmd.Parameters["@Product"].Value = bestelling.Product;
@@ -29,11 +30,9 @@ namespace DataLayer.Repos {
                     Console.WriteLine();
                     result = (int)cmd.ExecuteScalar() == 1 ? true : false;
                     return result;
-                    Console.WriteLine("BestaatBestelling - Geslaagd");
                 }
                 catch (Exception ex) {
                     throw new Exception(ex.Message);
-                    Console.WriteLine("BestaatBestelling - Niet geslaagd");
                 }
             }
         }
@@ -56,8 +55,37 @@ namespace DataLayer.Repos {
             }
         }
 
-        public List<Bestelling> SelecteerBestellingen() {
+        public Klant GetBestellingFromSpecificKlant(Klant klant) {
             throw new NotImplementedException();
+        }
+
+        public List<Bestelling> SelecteerBestellingen(int klantId) {
+            SqlConnection conn = DBConnection.CreateConnection();
+            string query = "SELECT * FROM [dbo].[Klanten] g INNER JOIN [dbo].[Bestellingen] s on g.KlantId = s.KlantId" +
+                "WHERE g.KlantId = @klantId";
+            using(SqlCommand comm = conn.CreateCommand()) {
+                try {
+                    List<Bestelling> klantlijst = new List<Bestelling>();
+                    conn.Open();
+                    comm.Parameters.AddWithValue("@klantId", klantId);
+                    IDataReader datareader = comm.ExecuteReader();
+                    Klant k = null;
+                    while (datareader.Read()) {
+                        if(k == null) {
+                            k = new Klant((string)datareader["Naam"], (string)datareader["Adres"]);
+                        }
+                        Bestelling bestelling = new Bestelling((int)datareader["Id"], BusinessLayer.Enums.Bier.Leffe, (int)datareader["Aantal"], k);
+                        klantlijst.Add(bestelling);
+                    }
+                    datareader.Close();
+                    return klantlijst;
+               }catch(Exception ex) {
+                    throw new BestellingRepositoryADOException("Bestellingrepository: SelecteeerBestellingen - gefaald!");
+                }
+                finally {
+                    conn.Close();
+                }
+            }
         }
 
         public void UpdateBestelling(Bestelling bestelling) {
@@ -99,11 +127,11 @@ namespace DataLayer.Repos {
 
         public void VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "INSERT INTO Bestellingen VALUES(@BestlID, @Product, @Aantal)";
+            string query = "INSERT INTO Bestellingen VALUES(@BestlelID, @Product, @Aantal)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
                     cmd.CommandText = query;
-                    cmd.Parameters.AddWithValue("@BestlID", bestelling.BestellingID);
+                    cmd.Parameters.AddWithValue("@BestlelID", bestelling.BestellingID);
                     cmd.Parameters.AddWithValue("@Product", bestelling.Product);
                     cmd.Parameters.AddWithValue("@Aantal", bestelling.Aantal);
                     cmd.ExecuteNonQuery();

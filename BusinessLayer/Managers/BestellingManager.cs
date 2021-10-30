@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Managers {
-    public class BestellingManager : IBestellingRepository {
+    public class BestellingManager {
         private IBestellingRepository repo;
 
         public BestellingManager(IBestellingRepository repo) { this.repo = repo; }
 
         public bool BestaatBestelling(Bestelling bestelling) {
-            if (bestelling == null) throw new BestellingException("Bestelling - BestaatBestelling - Bestelling is null!");
+            if (bestelling == null) throw new BestellingException("Klant - BestaatBestelling - Bestelling is null!");
             if (bestelling.BestellingID <= 0) return false;
             else
                 return false;
         }
 
         public void GetBestelling(int id) {
-            if (id <= 0) throw new BestellingException("Bestelling - GetBestelling - Bestelling is null");
+            if (id <= 0) throw new BestellingException("Klant - GetBestelling - Bestelling is null");
             else
                 repo.GetBestelling(id);
+        }
+
+        public Klant GetBestellingFromSpecificKlant(Klant klant) {
+            return repo.GetBestellingFromSpecificKlant(klant);
         }
 
         public List<Bestelling> SelecteerBestellingen() {
@@ -31,8 +36,8 @@ namespace BusinessLayer.Managers {
 
         public void UpdateBestelling(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Bestelling - UpdateBestelling - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - UpdateBestelling - Bestelling bestaat niet");
+                if (bestelling == null) throw new BestellingException("Klant - UpdateBestelling - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - UpdateBestelling - Bestelling bestaat niet");
                 else
                     repo.UpdateBestelling(bestelling);
             }
@@ -43,8 +48,8 @@ namespace BusinessLayer.Managers {
 
         public void VerwijderBestelling(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Bestelling - VerwijderBestellingToe - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - VerwijderBestelling - Bestelling bestaat niet");
+                if (bestelling == null) throw new BestellingException("Klant - VerwijderBestellingToe - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VerwijderBestelling - Bestelling bestaat niet");
                 else
                     repo.VerwijderBestelling(bestelling);
             }
@@ -55,8 +60,8 @@ namespace BusinessLayer.Managers {
 
         public void VoegBestellingToe(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Bestelling - VoegBestellingToe - Bestelling is null!");
-                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("Bestelling - VoegBestellingToe - Bestelling bestaat al");
+                if (bestelling == null) throw new BestellingException("Klant - VoegBestellingToe - Bestelling is null!");
+                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VoegBestellingToe - Bestelling bestaat al");
                 else
                     repo.VoegBestellingToe(bestelling);
             }

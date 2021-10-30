@@ -21,6 +21,11 @@ namespace BusinessLayer.Models {
             ZetAdres(adres);
         }
 
+        public Klant(string naam, string adres) {
+            ZetNaam(naam);
+            ZetAdres(adres);
+        }
+
 
         public IReadOnlyList<Bestelling> ToonBestelling() {
             return _bestellingen;
@@ -44,26 +49,6 @@ namespace BusinessLayer.Models {
         public void ZetAdres(string adres) {
             if (string.IsNullOrWhiteSpace(adres) || adres.Length < 10) throw new KlantException("Klant - ZetAdres - Adres heeft te weinig karakters!");
             this.Adres = adres;
-        }
-
-        public void VoegBestellingToe(Bestelling bestelling) {
-            if (bestelling == null) throw new KlantException("Klant: VerwijderBestelling - bestelling is null");
-            if (_bestellingen.Contains(bestelling)) {
-                throw new KlantException("Klant: VoegBestellinToe - bestelling allready exists");
-            }
-            else {
-                _bestellingen.Add(bestelling);
-                if (bestelling.Klant != this) {
-                    bestelling.ZetKlant(this);
-                }
-            }
-        }
-
-        public void VerwijderBestelling(Bestelling bestelling) {
-            if (bestelling == null) throw new KlantException("Klant: BestellingVerwijderen - bestelling is null");
-            else if (_bestellingen.Contains(bestelling)) throw new KlantException("Klant: BestellingVerwijderen - bestelling bestaat niet!");
-            else
-                _bestellingen.Remove(bestelling);
         }
 
         public override string ToString() {
