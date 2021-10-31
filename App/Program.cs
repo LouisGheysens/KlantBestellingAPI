@@ -24,7 +24,8 @@ namespace App {
             BestellingRepository br = new BestellingRepository();
             Bestelling b = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Luigi", "Patershol-3-Gent"));
             Bestelling bt = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Patje", "Korenlei-56-Zottegem"));
-            br.VoegBestellingToe(b);
+            //br.VoegBestellingToe(b);
+            br.BestaatBestelling(bt);
             //br.VoegBestellingToe(bt);
             //br.VerwijderBestelling(b);
             //br.UpdateBestelling();

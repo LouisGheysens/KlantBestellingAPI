@@ -21,6 +21,12 @@ namespace DataLayer.Repos {
                     bool result = false;
                     cmd.CommandText = query;
 
+                    cmd.Parameters.Add(new SqlParameter("@BestellingId", System.Data.SqlDbType.Int));
+                    cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
+
+                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
+                    cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
+
                     cmd.Parameters.Add(new SqlParameter("@Product", System.Data.SqlDbType.NVarChar));
                     cmd.Parameters["@Product"].Value = bestelling.Product;
 
@@ -85,7 +91,7 @@ namespace DataLayer.Repos {
             }
         }
 
-        //Klopt
+        //Klopt!
         public void UpdateBestelling(Bestelling bestelling) {
             var conn = DBConnection.CreateConnection();
             string query = "UPDATE Bestellingen SET BestellingId=@BestellingId, KlantId=@KlantId, Product=@Product, " +
@@ -112,11 +118,12 @@ namespace DataLayer.Repos {
             }
         }
 
+        //Klopt!
         public void VerwijderBestelling(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
             try {
                 conn.Open();
-                string sql = $"DELETE FROM Bestellingen WHERE ID = " + bestelling.BestellingID;
+                string sql = $"DELETE FROM Bestellingen WHERE BestellingId = " + bestelling.BestellingID;
                 var updateCommand = new SqlCommand(sql, conn);
                 updateCommand.ExecuteNonQuery();
                 Console.WriteLine("Bestelling werd verwijderd!");
