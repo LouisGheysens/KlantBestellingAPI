@@ -11,7 +11,7 @@ namespace BusinessLayer.Interfaces {
         bool BestaatKlant(Klant klant);
         void VerwijderKlant(Klant klant);
         void UpdateKlant(Klant klant);
-        void GetKlant(int id);
+        Klant GetKlant(int id);
         List<Klant> SelecteerKlanten();
     }
 }

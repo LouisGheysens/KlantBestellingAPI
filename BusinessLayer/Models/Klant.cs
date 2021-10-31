@@ -25,8 +25,6 @@ namespace BusinessLayer.Models {
             ZetNaam(naam);
             ZetAdres(adres);
         }
-
-
         public IReadOnlyList<Bestelling> ToonBestelling() {
             return _bestellingen;
         }
@@ -37,13 +35,8 @@ namespace BusinessLayer.Models {
         }
 
         public void ZetNaam(string naam) {
-            if (string.IsNullOrEmpty(naam)) throw new KlantException("Klant - ZetNaam -  Naam heeft 0 karakters!");
+            if (string.IsNullOrWhiteSpace(naam)) throw new KlantException("Klant - ZetNaam -  Naam heeft 0 karakters!");
             this.Naam = naam;
-        }
-
-        public bool HeeftBestelling(Bestelling bestelling) {
-            if (_bestellingen.Contains(bestelling)) return true;
-            else return false;
         }
 
         public void ZetAdres(string adres) {

@@ -3,3 +3,12 @@ C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.Genera
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.AssemblyInfoInputs.cache
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.AssemblyInfo.cs
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.csproj.CoreCompileInputs.cache
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\DataLayer.deps.json
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\DataLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\ref\DataLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\DataLayer.pdb
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\BusinessLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\BusinessLayer.pdb
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\ref\DataLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.pdb

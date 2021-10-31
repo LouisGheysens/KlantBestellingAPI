@@ -14,7 +14,7 @@ namespace DataLayer.Repos {
     public class BestellingRepository: IBestellingRepository {
         public bool BestaatBestelling(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE naam = @naam";
+            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @BestellingId";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
                 try {
@@ -39,7 +39,7 @@ namespace DataLayer.Repos {
 
         public void GetBestelling(int id) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "SELECT * FROM [WebApi].[dbo].[Bestelingen] WHERE BestelID = @id";
+            string query = "SELECT * FROM [WebApi].[dbo].[Bestelingen] WHERE BestellingID = @id";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
                 try {
@@ -53,11 +53,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("GetBestelling - Niet geslaagd");
                 }
             }
-        }
-
-        public Klant GetBestellingFromSpecificKlant(Klant klant) {
-            throw new NotImplementedException();
-        }
+        } 
 
         public List<Bestelling> SelecteerBestellingen(int klantId) {
             SqlConnection conn = DBConnection.CreateConnection();
@@ -74,7 +70,7 @@ namespace DataLayer.Repos {
                         if(k == null) {
                             k = new Klant((string)datareader["Naam"], (string)datareader["Adres"]);
                         }
-                        Bestelling bestelling = new Bestelling((int)datareader["Id"], BusinessLayer.Enums.Bier.Leffe, (int)datareader["Aantal"], k);
+                        Bestelling bestelling = new Bestelling((int)datareader["Id"], BusinessLayer.Enums.Bier.Duvel, (int)datareader["Aantal"], k); ;
                         klantlijst.Add(bestelling);
                     }
                     datareader.Close();
@@ -127,11 +123,11 @@ namespace DataLayer.Repos {
 
         public void VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "INSERT INTO Bestellingen VALUES(@BestlelID, @Product, @Aantal)";
+            string query = "INSERT INTO Bestellingen VALUES(@KlantId, @Product, @Aantal)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
                     cmd.CommandText = query;
-                    cmd.Parameters.AddWithValue("@BestlelID", bestelling.BestellingID);
+                    cmd.Parameters.AddWithValue("@KlantId", bestelling.Klant.KlantID);
                     cmd.Parameters.AddWithValue("@Product", bestelling.Product);
                     cmd.Parameters.AddWithValue("@Aantal", bestelling.Aantal);
                     cmd.ExecuteNonQuery();

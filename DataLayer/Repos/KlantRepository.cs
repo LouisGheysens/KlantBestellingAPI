@@ -13,14 +13,18 @@ using Microsoft.Data.SqlClient;
 
 namespace DataLayer.Repos {
     public class KlantRepository : IKlantRepository {
+        //Klopt!
         public bool BestaatKlant(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE naam = @naam";
+            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
                 try {
                     bool result = false;
                     cmd.CommandText = query;
+
+                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
+                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
 
                     cmd.Parameters.Add(new SqlParameter("@Naam", System.Data.SqlDbType.NVarChar));
                     cmd.Parameters["@Naam"].Value = klant.Naam;
@@ -38,7 +42,7 @@ namespace DataLayer.Repos {
             }
         }
 
-        public void GetKlant(int id) {
+        public Klant GetKlant(int id) {
             SqlConnection connection = DBConnection.CreateConnection();
             string query = "SELECT * FROM dbo.Klanten k LEFT JOIN dbo.Bestellingen b ON k.BestellingId=b.Id WHERE Id=@Id";
             using (SqlCommand command = connection.CreateCommand()) {
@@ -59,9 +63,9 @@ namespace DataLayer.Repos {
                         if (!reader.IsDBNull(reader.GetOrdinal("Id"))) {
                             int aantal = (int)reader["Aantal"];
                             string product = (string)reader["Product"];
-                            bestelling = new Bestelling(aantal, klant, (Bier)Enum.Parse(typeof(Enum), product));
+                            bestelling = new Bestelling((Bier)Enum.Parse(typeof(Enum), product), aantal, klant);
                         }
-                        klant.VoegBestellingToe(bestelling);
+                        //klant.VoegBestellingToe(bestelling);
                     }
                     return klant;
                 }
@@ -73,11 +77,32 @@ namespace DataLayer.Repos {
                 }
             }
         }
-
+        
+        //Klopt!
         public List<Klant> SelecteerKlanten() {
-            throw new NotImplementedException();
+            var conn = DBConnection.CreateConnection();
+            List<Klant> klanten = new List<Klant>();
+            string query = "SELECT * FROM Klanten";
+            using(SqlCommand comm = conn.CreateCommand()) {
+                try {
+                    conn.Open();
+                    comm.CommandText = query;
+                    SqlDataReader r = comm.ExecuteReader();
+                    while (r.Read()) {
+                        klanten.Add(new Klant((string)r["Naam"], (string)r["Adres"]));
+                    }
+                    return klanten;
+                }
+                catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: SelecteerKlanten - gefaald!");
+                }
+                finally {
+                    conn.Close();
+                }
+            }
         }
 
+        //Klopt!
         public void UpdateKlant(Klant klant) {
             var conn = DBConnection.CreateConnection();
             string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE KlantId=@KlantId";
@@ -101,28 +126,31 @@ namespace DataLayer.Repos {
             }
         }
 
+
         public void VerwijderKlant(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
-            try {
-                conn.Open();
-                string sql = $"DELETE FROM Klanten WHERE Naam = " + klant.Naam;
-                var updateCommand = new SqlCommand(sql, conn);
-                updateCommand.ExecuteNonQuery();
-                Console.WriteLine("Klant werd verwijderd!");
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Klant werd niet verwijderd");
-            }
-            finally {
-                conn.Close();
-                conn.Dispose();
+            string query = "DELETE FROM Klanten WHERE KlantId=@KlantId";
+            using(SqlCommand comm = conn.CreateCommand()) {
+                try {
+                    conn.Open();
+                    comm.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
+                    comm.CommandText = query;
+                    comm.Parameters["@KlantId"].Value = klant.KlantID;
+                    comm.ExecuteNonQuery();
+                    Console.WriteLine("Klant werd verwijderd!");
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("Klantrepository: VerwijderKlant - gefaald!");
+                }
+                finally {
+                    conn.Close();
+                }
             }
         }
 
+        //Klopt!
         public void VoegKlantToe(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "INSERT INTO Klanten VALUES(@Naam, @Adres)";
+            string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
                     conn.Open();
@@ -133,8 +161,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("Klant werd toegevoegd!");
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("Niet opgeslagen!");
+                    throw new KlantRepositoryADOException("Klantrepository: VoegKlantToe - gefaald!");
                 }
                 finally {
                     conn.Close();

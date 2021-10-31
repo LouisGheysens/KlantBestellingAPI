@@ -22,6 +22,12 @@ namespace BusinessLayer {
             this.Product = product;
             ZetAantal(aantal);
         }
+
+
+        public Bestelling(Bier product, int aantal, Klant k) {
+            this.Product = product;
+            ZetAantal(aantal);
+        }
         public void ZetId(int id) {
             if (id <= 0) throw new BestellingException("Bestelling - ZetId - ID is 0!");
             this.BestellingID = id;

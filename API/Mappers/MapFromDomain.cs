@@ -16,7 +16,8 @@ namespace API.Mappers {
                 List<Bestelling> bestellingen = bmanager.SelecteerBestellingen(klant.KlantID);
                 KlantRESTOutputTDO dto = new KlantRESTOutputTDO(klant.KlantID, klant.Naam, klant.Adres, bestellingen);
                 return dto;
-            }catch(Exception ex) {
+            }
+            catch (Exception ex) {
                 throw new MapException("MapFromDomain: MapFromKlantDomain - Gefaald!", ex);
             }
         }

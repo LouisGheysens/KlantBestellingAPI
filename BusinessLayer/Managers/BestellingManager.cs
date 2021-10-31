@@ -26,12 +26,8 @@ namespace BusinessLayer.Managers {
                 repo.GetBestelling(id);
         }
 
-        public Klant GetBestellingFromSpecificKlant(Klant klant) {
-            return repo.GetBestellingFromSpecificKlant(klant);
-        }
-
-        public List<Bestelling> SelecteerBestellingen() {
-            return repo.SelecteerBestellingen();
+        public List<Bestelling> SelecteerBestellingen(int klantId) {
+            return repo.SelecteerBestellingen(klantId);
         }
 
         public void UpdateBestelling(Bestelling bestelling) {

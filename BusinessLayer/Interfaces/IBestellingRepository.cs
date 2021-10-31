@@ -14,7 +14,6 @@ namespace BusinessLayer.Interfaces {
         void UpdateBestelling(Bestelling bestelling);
         void GetBestelling(int id);
         List<Bestelling> SelecteerBestellingen(int klantId);
-        Klant GetBestellingFromSpecificKlant(Klant klant);
     }
 
 
