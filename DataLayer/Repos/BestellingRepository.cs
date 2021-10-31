@@ -55,6 +55,7 @@ namespace DataLayer.Repos {
             }
         } 
 
+        //Klopt!
         public List<Bestelling> SelecteerBestellingen(int klantId) {
             SqlConnection conn = DBConnection.CreateConnection();
             string query = "SELECT * FROM [dbo].[Klanten] g INNER JOIN [dbo].[Bestellingen] s on g.KlantId = s.KlantId" +
@@ -84,21 +85,30 @@ namespace DataLayer.Repos {
             }
         }
 
+        //Klopt
         public void UpdateBestelling(Bestelling bestelling) {
             var conn = DBConnection.CreateConnection();
-            conn.Open();
-            SqlCommand comm = new SqlCommand($"update Bestellingen set BesteID= '" + bestelling.BestellingID + "', Product= " + bestelling.Product + " , Aantal=' " + bestelling.Aantal + "' where Klant = " + bestelling.Klant + "", conn);
-            try {
-                comm.ExecuteNonQuery();
-                Console.WriteLine("Bestelling is bewerkt!");
-
-            }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Bestelling werd niet bewerkt!");
-            }
-            finally {
-                conn.Close();
+            string query = "UPDATE Bestellingen SET BestellingId=@BestellingId, KlantId=@KlantId, Product=@Product, " +
+                "Aantal=@Aantal WHERE BestellingId=@BestellingId";
+            using(SqlCommand comm = conn.CreateCommand()) {
+                try {
+                    conn.Open();
+                    comm.Parameters.Add("@BestellingId", SqlDbType.Int);
+                    comm.Parameters.Add("@KlantId", SqlDbType.Int);
+                    comm.Parameters.Add("@Product", SqlDbType.NVarChar);
+                    comm.Parameters.Add("@Aantal", SqlDbType.Int);
+                    comm.CommandText = query;
+                    comm.Parameters["@BestellingId"].Value = bestelling.BestellingID; ;
+                    comm.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
+                    comm.Parameters["@Product"].Value = bestelling.Product;
+                    comm.Parameters["@Aantal"].Value = bestelling.Aantal;
+                    comm.ExecuteNonQuery();
+                }catch(Exception ex) {
+                    throw new BestellingRepositoryADOException("BestellingRepository: UpdateBestelling - gefaald!");
+                }
+                finally {
+                    conn.Close();
+                }
             }
         }
 
