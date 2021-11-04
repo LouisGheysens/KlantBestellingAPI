@@ -1,3 +1,7 @@
+using BusinessLayer.Interfaces;
+using BusinessLayer.Managers;
+using DataLayer;
+using DataLayer.Repos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +25,11 @@ namespace API {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-
             services.AddControllers();
+            services.AddSingleton<IKlantRepository>(x => new KlantRepository(DBConnection.CreateConnection()));
+            services.AddSingleton<IBestellingRepository>(x => new BestellingRepository(DBConnection.CreateConnection()));
+            services.AddSingleton<KlantManager>();
+            services.AddSingleton<BestellingManager>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });

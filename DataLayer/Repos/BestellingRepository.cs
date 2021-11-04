@@ -12,6 +12,12 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repos {
     public class BestellingRepository: IBestellingRepository {
+        private SqlConnection sqlConnection;
+
+        public BestellingRepository(SqlConnection sqlConnection) {
+            this.sqlConnection = sqlConnection;
+        }
+
         public bool BestaatBestelling(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
             string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @BestellingId";
@@ -50,7 +56,11 @@ namespace DataLayer.Repos {
                     Console.WriteLine("GetBestelling - Niet geslaagd");
                 }
             }
-        } 
+        }
+
+        public List<Bestelling> GetBestellingKlant(int id) {
+            throw new NotImplementedException();
+        }
 
         //Klopt!
         public List<Bestelling> SelecteerBestellingen(int klantId) {

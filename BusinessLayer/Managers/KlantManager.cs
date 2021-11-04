@@ -15,48 +15,72 @@ namespace BusinessLayer.Managers {
         public KlantManager(IKlantRepository repo) { this.repo = repo; }
 
         public bool BestaatKlant(Klant klant) {
-            if (klant.KlantID <= 0) {
-                return false;
-            }
-            else {
-                return true;
+            switch (klant.KlantID) {
+                case <= 0:
+                    return false;
+                default:
+                    return true;
             }
         }
 
-        public void GetKlant(int id) {
-            if (id <= 0) throw new KlantException("Bestelling - GetKlant - Klant is null");
-            else
-                GetKlant(id);
+        public bool BestaatKlant(int id) {
+            switch (id) {
+                case <= 0:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        public Klant GetKlant(int id) {
+            try {
+                if (id <= 0) throw new KlantException("KlantManager: GetKlant(id) - Klant is null");
+                return repo.GetKlant(id);
+            }catch(Exception ex) {
+                throw new KlantException("KlantManager: GetKlant - gefaald", ex);
+            }
         }
 
         public List<Klant> SelecteerKlanten() {
-            return repo.SelecteerKlanten();
+            try {
+                return repo.SelecteerKlanten();
+            }
+            catch(Exception ex) {
+                throw new KlantException("KlantManager: SelecteerKlanten - gefaald", ex);
+            }
         }
 
         public void UpdateKlant(Klant klant) {
-            if (klant == null) throw new KlantException("Bestelling - UpdateKlant - Klant is null");
-            if (!repo.BestaatKlant(klant)) throw new KlantException("Bestelling - UpdateKlant - Klant bestaat niet");
-            else
+            try {
+                if (klant == null) throw new KlantException("KlantManager: UpdateKlant - Klant is null");
+                if (!repo.BestaatKlant(klant)) throw new KlantException("KlantManager: UpdateKlant - Klant bestaat niet");
                 repo.UpdateKlant(klant);
+            }
+            catch(Exception ex) {
+                throw new KlantException("KlantManager: UpdateKlant - gefaald", ex);
+            }
         }
 
         public void VerwijderKlant(Klant klant) {
-            if (klant == null) throw new KlantException("Bestelling - VerwijderenKlant - Klant is null");
-            if (!repo.BestaatKlant(klant)) throw new KlantException("Bestelling - VerwijderenKlant - Klant bestaat niet");
-            else
+            try {
+                if (klant == null) throw new KlantException("KlantManager: VerwijderenKlant - Klant is null");
+                if (!repo.BestaatKlant(klant)) throw new KlantException("KlantManager: VerwijderenKlant - Klant bestaat niet");
                 repo.VerwijderKlant(klant);
+            }
+            catch(Exception ex) {
+                throw new KlantException("KlantManager: VerwijderKlant - gefaald", ex);
+            }
         }
 
-        public void VoegKlantToe(Klant klant) {
+        public Klant VoegKlantToe(Klant klant) {
             try {
-                if (klant == null) throw new KlantException("Bestelling - VoegKlantToe - Klant is null");
-                if (repo.BestaatKlant(klant)) throw new KlantException("Bestelling - VoegKlantToe - Klant bestaat al");
-                else {
-                    repo.VoegKlantToe(klant);
-                }
+                if (klant == null) throw new KlantException("KlantManager: VoegKlantToe - Klant is null");
+                if (repo.BestaatKlant(klant)) throw new KlantException("KlantManager: VoegKlantToe - Klant bestaat al");
+                repo.VoegKlantToe(klant);
+                return klant;
             }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
+            catch(Exception ex) {
+                throw new KlantException("KlantManager: VoegKlantToe - gefaald", ex);
             }
         }
 

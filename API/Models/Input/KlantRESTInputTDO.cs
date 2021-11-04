@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace API.Models.Input {
     public class KlantRESTInputTDO {
-        public int KlantID { get; set; }
+        public int KlantID { get; private set; }
 
-        public string Naam { get; set; }
+        public string Naam { get; private set; }
 
-        public string Adres { get; set; }
+        public string Adres { get; private set; }
+
+        public int AantalBestellingen { get; private set; }
 
         private List<Bestelling> _Bestellingen = new List<Bestelling>();
     }

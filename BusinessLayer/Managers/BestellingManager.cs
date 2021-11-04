@@ -14,55 +14,54 @@ namespace BusinessLayer.Managers {
         public BestellingManager(IBestellingRepository repo) { this.repo = repo; }
 
         public bool BestaatBestelling(Bestelling bestelling) {
-            if (bestelling == null) throw new BestellingException("Klant - BestaatBestelling - Bestelling is null!");
+            if (bestelling == null) throw new BestellingException("BestellingManager - BestaatBestelling - Bestelling is null!");
             if (bestelling.BestellingID <= 0) return false;
             else
                 return false;
         }
 
-        public void GetBestelling(int id) {
-            if (id <= 0) throw new BestellingException("Klant - GetBestelling - Bestelling is null");
-            else
-                repo.GetBestelling(id);
-        }
-
-        public List<Bestelling> SelecteerBestellingen(int klantId) {
-            return repo.SelecteerBestellingen(klantId);
+        public List<Bestelling> GetBestellingKlant(int id) {
+            try {
+                if (id <= 0) throw new BestellingException("BestellingManager: GetBestellingKlant - Id is kleiner of gelijk aan 0!");
+                return repo.GetBestellingKlant(id);
+            }catch(Exception ex) {
+                throw new BestellingException("BestellingManager: GetBestellingKlant(id) - gefaald", ex);
+            }
         }
 
         public void UpdateBestelling(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Klant - UpdateBestelling - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - UpdateBestelling - Bestelling bestaat niet");
+                if (bestelling == null) throw new BestellingException("BestellingManager - UpdateBestelling - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - UpdateBestelling - Bestelling bestaat niet");
                 else
                     repo.UpdateBestelling(bestelling);
             }
             catch (Exception ex) {
-                Console.WriteLine(ex.Message);
+                throw new BestellingException("BestellingManager: UpdateBestelling - gefaald", ex);
             }
         }
 
         public void VerwijderBestelling(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Klant - VerwijderBestellingToe - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VerwijderBestelling - Bestelling bestaat niet");
+                if (bestelling == null) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - VerwijderBestelling - Bestelling bestaat niet");
                 else
                     repo.VerwijderBestelling(bestelling);
             }
             catch (Exception ex) {
-                Console.WriteLine(ex.Message);
+                throw new BestellingException("BestellingManager: VerwijderBestelling - gefaald", ex);
             }
         }
 
         public void VoegBestellingToe(Bestelling bestelling) {
             try {
-                if (bestelling == null) throw new BestellingException("Klant - VoegBestellingToe - Bestelling is null!");
-                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("Klant - VoegBestellingToe - Bestelling bestaat al");
+                if (bestelling == null) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling is null!");
+                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling bestaat al");
                 else
                     repo.VoegBestellingToe(bestelling);
             }
             catch (Exception ex) {
-                Console.WriteLine(ex.Message);
+                throw new BestellingException("BestellingManager: VoegBestellingToe - gefaald", ex);
             }
         }
     }

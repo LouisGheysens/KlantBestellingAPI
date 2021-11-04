@@ -1,8 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "omjTnrAETjid9EHZRl7ZqvSUlHz8YtubplUP8rAI/durkfltnNFz9GYTm32Ls5twtlnB7mfAezAr1tYOxsMRmg==",
+  "dgSpecHash": "hlw+VeBoy9Kc4TSdEtlmhIlGGr8elIqUKlLnct5xq/MZyoRa/blwQLjDe6VAPWPkx2SQ3FJeI9Ep58cAOZeGig==",
   "success": true,
   "projectFilePath": "C:\\Users\\Eigenaar\\KlantBestellingAPI\\BusinessLayer\\BusinessLayer.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Eigenaar\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\5.0.11\\microsoft.aspnetcore.jsonpatch.5.0.11.nupkg.sha512",
+    "C:\\Users\\Eigenaar\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\5.0.11\\microsoft.aspnetcore.mvc.newtonsoftjson.5.0.11.nupkg.sha512",
+    "C:\\Users\\Eigenaar\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\Eigenaar\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512",
+    "C:\\Users\\Eigenaar\\.nuget\\packages\\newtonsoft.json.bson\\1.0.2\\newtonsoft.json.bson.1.0.2.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -13,6 +13,12 @@ using Microsoft.Data.SqlClient;
 
 namespace DataLayer.Repos {
     public class KlantRepository : IKlantRepository {
+        private SqlConnection sqlConnection;
+
+        public KlantRepository(SqlConnection sqlConnection) {
+            this.sqlConnection = sqlConnection;
+        }
+
         //Klopt!
         public bool BestaatKlant(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
@@ -26,11 +32,27 @@ namespace DataLayer.Repos {
                     cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
                     cmd.Parameters["@KlantId"].Value = klant.KlantID;
 
-                    cmd.Parameters.Add(new SqlParameter("@Naam", System.Data.SqlDbType.NVarChar));
-                    cmd.Parameters["@Naam"].Value = klant.Naam;
+                    Console.WriteLine();
+                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
+                    return result;
+                }
+                catch (Exception ex) {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
 
-                    cmd.Parameters.Add(new SqlParameter("@Adres", System.Data.SqlDbType.NVarChar));
-                    cmd.Parameters["@Adres"].Value = klant.Adres;
+        public bool BestaatKlantId(int id) {
+            SqlConnection conn = DBConnection.CreateConnection();
+            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
+            using (SqlCommand cmd = conn.CreateCommand()) {
+                conn.Open();
+                try {
+                    bool result = false;
+                    cmd.CommandText = query;
+
+                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
+                    cmd.Parameters["@KlantId"].Value = id;
 
                     Console.WriteLine();
                     result = (int)cmd.ExecuteScalar() == 1 ? true : false;
@@ -148,7 +170,7 @@ namespace DataLayer.Repos {
         }
 
         //Klopt!
-        public void VoegKlantToe(Klant klant) {
+        public Klant VoegKlantToe(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
             string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres)";
             using (SqlCommand cmd = conn.CreateCommand()) {
@@ -162,11 +184,13 @@ namespace DataLayer.Repos {
                 }
                 catch (Exception ex) {
                     throw new KlantRepositoryADOException("Klantrepository: VoegKlantToe - gefaald!");
+
                 }
                 finally {
                     conn.Close();
                 }
             }
+            return klant;
         }
     }
 }

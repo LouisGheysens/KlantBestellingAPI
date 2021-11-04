@@ -1,4 +1,5 @@
 ﻿using API.Exceptions;
+using API.Models.Input;
 using API.Models.Output;
 using BusinessLayer.Models;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace API.Mappers {
     public class MapToDomain {
         //PROPERTIES VAN RESTOUTPUTTDO WORDEN HIERIN VERWERKT!!!
-        public static Klant MapToKlantDomain(KlantRESTOutputTDO tdo) {
+        public static Klant MapToKlantDomain(KlantRESTInputTDO tdo) {
             try {
                 Klant klant = new Klant(tdo.Naam, tdo.Adres);
                 return klant;

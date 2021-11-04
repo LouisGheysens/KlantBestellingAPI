@@ -7,19 +7,24 @@ using System.Threading.Tasks;
 namespace API.Models.Output {
     public class KlantRESTOutputTDO {
 
-        public int KlantID { get; set; }
+        public int KlantID { get; private set; }
 
-        public string Naam { get; set; }
+        public string Naam { get; private set; }
 
-        public string Adres { get; set; }
+        public string Adres { get; private set; }
+
+        public int AantalBestellingen { get; private set; }
 
         private List<Bestelling> _Bestellingen = new List<Bestelling>();
 
-        public KlantRESTOutputTDO(int KlantID, string naam, string adres, List<Bestelling> bestellingen) {
+        public KlantRESTOutputTDO(int id, string naam, string adres) {
+            this.KlantID = id;
+            this.Naam = naam;
+            this.Adres = adres;
+        }
 
-            this.KlantID = KlantID;
-            Naam = naam;
-            Adres = adres;
+        public KlantRESTOutputTDO(int id, string naam, string adres, int aantalbestellingen, List<Bestelling> bestellingen): this(id, naam, adres) {
+            this.AantalBestellingen = aantalbestellingen;
             this._Bestellingen = bestellingen;
         }
     }

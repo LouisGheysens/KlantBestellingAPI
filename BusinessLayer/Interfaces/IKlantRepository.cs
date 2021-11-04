@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces {
     public interface IKlantRepository {
-        void VoegKlantToe(Klant klant);
+        Klant VoegKlantToe(Klant klant);
         bool BestaatKlant(Klant klant);
+        bool BestaatKlantId(int id);
         void VerwijderKlant(Klant klant);
         void UpdateKlant(Klant klant);
         Klant GetKlant(int id);
