@@ -30,9 +30,10 @@ namespace API.Controllers {
         [HttpGet("{id}")]
         public ActionResult<KlantRESTOutputTDO> BestaatKlant(int id) {
             var klant = kRepo.GetKlant(id);
-
             return Ok(MapFromDomain.MapFromKlantDomain(url, klant, tManager));
         }
+
+
 
 
     }

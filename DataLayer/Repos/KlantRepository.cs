@@ -126,19 +126,19 @@ namespace DataLayer.Repos {
             }
         }
 
-
+        //Klopt!
         public void VerwijderKlant(Klant klant) {
             SqlConnection conn = DBConnection.CreateConnection();
             string query = "DELETE FROM Klanten WHERE KlantId=@KlantId";
-            using(SqlCommand comm = conn.CreateCommand()) {
+            using (SqlCommand comm = new(query, conn)) {
                 try {
                     conn.Open();
                     comm.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
-                    comm.CommandText = query;
                     comm.Parameters["@KlantId"].Value = klant.KlantID;
                     comm.ExecuteNonQuery();
                     Console.WriteLine("Klant werd verwijderd!");
-                }catch(Exception ex) {
+                }
+                catch (Exception ex) {
                     throw new KlantRepositoryADOException("Klantrepository: VerwijderKlant - gefaald!");
                 }
                 finally {

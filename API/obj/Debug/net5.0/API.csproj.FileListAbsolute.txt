@@ -27,3 +27,5 @@ C:\Users\Eigenaar\KlantBestellingAPI\API\obj\Debug\net5.0\API.dll
 C:\Users\Eigenaar\KlantBestellingAPI\API\obj\Debug\net5.0\ref\API.dll
 C:\Users\Eigenaar\KlantBestellingAPI\API\obj\Debug\net5.0\API.pdb
 C:\Users\Eigenaar\KlantBestellingAPI\API\obj\Debug\net5.0\API.genruntimeconfig.cache
+C:\Users\Eigenaar\KlantBestellingAPI\API\bin\Debug\net5.0\BusinessLayer.dll
+C:\Users\Eigenaar\KlantBestellingAPI\API\bin\Debug\net5.0\BusinessLayer.pdb

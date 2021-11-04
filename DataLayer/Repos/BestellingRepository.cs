@@ -24,15 +24,6 @@ namespace DataLayer.Repos {
                     cmd.Parameters.Add(new SqlParameter("@BestellingId", System.Data.SqlDbType.Int));
                     cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
 
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
-
-                    cmd.Parameters.Add(new SqlParameter("@Product", System.Data.SqlDbType.NVarChar));
-                    cmd.Parameters["@Product"].Value = bestelling.Product;
-
-                    cmd.Parameters.Add(new SqlParameter("@Aantal", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
-
                     Console.WriteLine();
                     result = (int)cmd.ExecuteScalar() == 1 ? true : false;
                     return result;
@@ -138,9 +129,10 @@ namespace DataLayer.Repos {
             }
         }
 
+        //Klopt
         public void VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = DBConnection.CreateConnection();
-            string query = "INSERT INTO Bestellingen VALUES(@KlantId, @Product, @Aantal)";
+            string query = "INSERT INTO Bestellingen(KlantId, Product, Aantal)) VALUES(@KlantId, @Product, @Aantal)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
                     cmd.CommandText = query;
