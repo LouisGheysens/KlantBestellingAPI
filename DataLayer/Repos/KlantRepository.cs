@@ -13,15 +13,21 @@ using Microsoft.Data.SqlClient;
 
 namespace DataLayer.Repos {
     public class KlantRepository : IKlantRepository {
-        private SqlConnection sqlConnection;
 
-        public KlantRepository(SqlConnection sqlConnection) {
-            this.sqlConnection = sqlConnection;
+        private string connectionString;
+
+        public KlantRepository(string connectionString) {
+            this.connectionString = connectionString;
+        }
+
+        private SqlConnection getConnection() {
+            SqlConnection connection = new SqlConnection(connectionString);
+            return connection;
         }
 
         //Klopt!
         public bool BestaatKlant(Klant klant) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
@@ -43,7 +49,7 @@ namespace DataLayer.Repos {
         }
 
         public bool BestaatKlantId(int id) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
@@ -65,7 +71,7 @@ namespace DataLayer.Repos {
         }
 
         public Klant GetKlant(int id) {
-            SqlConnection connection = DBConnection.CreateConnection();
+            SqlConnection connection = getConnection();
             string query = "SELECT * FROM dbo.Klanten k LEFT JOIN dbo.Bestellingen b ON k.BestellingId=b.Id WHERE Id=@Id";
             using (SqlCommand command = connection.CreateCommand()) {
                 try {
@@ -102,7 +108,7 @@ namespace DataLayer.Repos {
         
         //Klopt!
         public List<Klant> SelecteerKlanten() {
-            var conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             List<Klant> klanten = new List<Klant>();
             string query = "SELECT * FROM Klanten";
             using(SqlCommand comm = conn.CreateCommand()) {
@@ -116,7 +122,7 @@ namespace DataLayer.Repos {
                     return klanten;
                 }
                 catch(Exception ex) {
-                    throw new KlantRepositoryADOException("KlantRepository: SelecteerKlanten - gefaald!");
+                    throw new KlantRepositoryADOException("KlantRepository: SelecteerKlanten - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
@@ -126,7 +132,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public void UpdateKlant(Klant klant) {
-            var conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE KlantId=@KlantId";
             using(SqlCommand cmd = conn.CreateCommand()) {
                 try {
@@ -140,7 +146,7 @@ namespace DataLayer.Repos {
                     cmd.Parameters["@Adres"].Value = klant.Adres;
                     cmd.ExecuteNonQuery();
                 }catch(Exception ex) {
-                    throw new KlantRepositoryADOException("KlantRepository: UpdateKlant - gefaald!");
+                    throw new KlantRepositoryADOException("KlantRepository: UpdateKlant - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
@@ -150,7 +156,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public void VerwijderKlant(Klant klant) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "DELETE FROM Klanten WHERE KlantId=@KlantId";
             using (SqlCommand comm = new(query, conn)) {
                 try {
@@ -161,7 +167,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("Klant werd verwijderd!");
                 }
                 catch (Exception ex) {
-                    throw new KlantRepositoryADOException("Klantrepository: VerwijderKlant - gefaald!");
+                    throw new KlantRepositoryADOException("Klantrepository: VerwijderKlant - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
@@ -171,7 +177,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public Klant VoegKlantToe(Klant klant) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
@@ -183,7 +189,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("Klant werd toegevoegd!");
                 }
                 catch (Exception ex) {
-                    throw new KlantRepositoryADOException("Klantrepository: VoegKlantToe - gefaald!");
+                    throw new KlantRepositoryADOException("Klantrepository: VoegKlantToe - gefaald!", ex);
 
                 }
                 finally {

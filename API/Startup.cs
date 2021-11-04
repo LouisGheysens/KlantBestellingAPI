@@ -21,13 +21,15 @@ namespace API {
             Configuration = configuration;
         }
 
+        private string connectionString = @"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True";
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllers();
-            services.AddSingleton<IKlantRepository>(x => new KlantRepository(DBConnection.CreateConnection()));
-            services.AddSingleton<IBestellingRepository>(x => new BestellingRepository(DBConnection.CreateConnection()));
+            services.AddSingleton<IKlantRepository>(x => new KlantRepository(connectionString));
+            services.AddSingleton<IBestellingRepository>(x => new BestellingRepository(connectionString));
             services.AddSingleton<KlantManager>();
             services.AddSingleton<BestellingManager>();
             services.AddSwaggerGen(c =>

@@ -12,14 +12,20 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repos {
     public class BestellingRepository: IBestellingRepository {
-        private SqlConnection sqlConnection;
 
-        public BestellingRepository(SqlConnection sqlConnection) {
-            this.sqlConnection = sqlConnection;
+        private string connectionString;
+
+        public BestellingRepository(string connectionString) {
+            this.connectionString = connectionString;
+        }
+
+        private SqlConnection getConnection() {
+            SqlConnection connection = new SqlConnection(connectionString);
+            return connection;
         }
 
         public bool BestaatBestelling(Bestelling bestelling) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @BestellingId";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
@@ -35,13 +41,13 @@ namespace DataLayer.Repos {
                     return result;
                 }
                 catch (Exception ex) {
-                    throw new Exception(ex.Message);
+                    throw new BestellingRepositoryADOException("Bestellingrepository: BestaatBestelling - gefaald!", ex);
                 }
             }
         }
 
         public void GetBestelling(int id) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "SELECT * FROM [WebApi].[dbo].[Bestelingen] WHERE BestellingID = @id";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 conn.Open();
@@ -52,8 +58,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("GetBestelling - geslaagd!");
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("GetBestelling - Niet geslaagd");
+                    throw new BestellingRepositoryADOException("Bestellingrepository: GetBestelling(id) - gefaald!",ex);
                 }
             }
         }
@@ -64,7 +69,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public List<Bestelling> SelecteerBestellingen(int klantId) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection(); ;
             string query = "SELECT * FROM [dbo].[Klanten] g INNER JOIN [dbo].[Bestellingen] s on g.KlantId = s.KlantId" +
                 "WHERE g.KlantId = @klantId";
             using(SqlCommand comm = conn.CreateCommand()) {
@@ -84,7 +89,7 @@ namespace DataLayer.Repos {
                     datareader.Close();
                     return klantlijst;
                }catch(Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: SelecteeerBestellingen - gefaald!");
+                    throw new BestellingRepositoryADOException("Bestellingrepository: SelecteeerBestellingen - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
@@ -94,7 +99,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public void UpdateBestelling(Bestelling bestelling) {
-            var conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "UPDATE Bestellingen SET BestellingId=@BestellingId, KlantId=@KlantId, Product=@Product, " +
                 "Aantal=@Aantal WHERE BestellingId=@BestellingId";
             using(SqlCommand comm = conn.CreateCommand()) {
@@ -111,7 +116,7 @@ namespace DataLayer.Repos {
                     comm.Parameters["@Aantal"].Value = bestelling.Aantal;
                     comm.ExecuteNonQuery();
                 }catch(Exception ex) {
-                    throw new BestellingRepositoryADOException("BestellingRepository: UpdateBestelling - gefaald!");
+                    throw new BestellingRepositoryADOException("BestellingRepository: UpdateBestelling - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
@@ -121,7 +126,7 @@ namespace DataLayer.Repos {
 
         //Klopt!
         public void VerwijderBestelling(Bestelling bestelling) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             try {
                 conn.Open();
                 string sql = $"DELETE FROM Bestellingen WHERE BestellingId = " + bestelling.BestellingID;
@@ -129,9 +134,8 @@ namespace DataLayer.Repos {
                 updateCommand.ExecuteNonQuery();
                 Console.WriteLine("Bestelling werd verwijderd!");
             }
-            catch (Exception e) {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Bestelling werd niet verwijderd");
+            catch (Exception ex) {
+                throw new BestellingRepositoryADOException("Bestellingrepository: VerwijderBestelling - gefaald!", ex);
             }
             finally {
                 conn.Close();
@@ -141,7 +145,7 @@ namespace DataLayer.Repos {
 
         //Klopt
         public void VoegBestellingToe(Bestelling bestelling) {
-            SqlConnection conn = DBConnection.CreateConnection();
+            SqlConnection conn = getConnection();
             string query = "INSERT INTO Bestellingen(KlantId, Product, Aantal)) VALUES(@KlantId, @Product, @Aantal)";
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
@@ -153,8 +157,7 @@ namespace DataLayer.Repos {
                     Console.WriteLine("Bestelling werd toegevoegd!");
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("Bestelling werd niet toegevoegd!");
+                    throw new BestellingRepositoryADOException("Bestellingrepository: VoegBestellingToe - gefaald!", ex);
                 }
                 finally {
                     conn.Close();
