@@ -14,7 +14,7 @@ namespace API.Mappers {
                 Klant klant = new Klant(tdo.Naam, tdo.Adres);
                 return klant;
             }catch(Exception ex) {
-                throw new MapException("MapToDomain: MapToKlantDomain - gefaald!");
+                throw new MapException("MapToDomain: MapToKlantDomain - gefaald!", ex);
             }
         }
     }
