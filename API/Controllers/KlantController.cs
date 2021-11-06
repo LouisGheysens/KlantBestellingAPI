@@ -11,12 +11,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataLayer;
+using DataLayer.Repos;
+using BusinessLayer;
 
 namespace API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class KlantController : ControllerBase {
         private string url = "api/klant/";
+        KlantRepository repo = new KlantRepository(@"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True");
+        BestellingRepository repob = new BestellingRepository(@"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True");
         private readonly IKlantRepository kRepo;
         private readonly IBestellingRepository bRepo;
         private readonly BestellingManager bManager;
@@ -46,11 +51,12 @@ namespace API.Controllers {
         [HttpPost]
         public ActionResult<KlantRESTOutputTDO> PostKlant([FromBody] KlantRESTInputTDO tdo) {
             try {
-                Klant klant = kManager.VoegKlantToe(MapToDomain.MapToKlantDomain(tdo));
-                return CreatedAtAction(nameof(GetKlant), new { id = klant.KlantID },
-                    MapFromDomain.MapFromKlantDomain(url, klant, bManager));
+                Klant k = new Klant(tdo.KlantID, tdo.Naam, tdo.Adres); ;
+                repo.VoegKlantToe(k);
+                return CreatedAtAction(nameof(PostKlant), new { KlantId = k.KlantID }, k);
 
             }catch(Exception ex) {
+                
                 throw new ControllerException("KlantController: PostKlant - gefaald", ex);
             }
         }
@@ -92,13 +98,78 @@ namespace API.Controllers {
                 throw new ControllerException("KlantController: PutKlant - gefaald", ex);
             }
         }
-
         #endregion
 
         #region Bestelling
+        //Get
+        [HttpGet("{id}")]
+        public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id) {
+            try {
+                var bestelling = bRepo.GetBestellingKlant(id);
+                return Ok(MapFromDomain.MapFromBestellingDomain(url, klant, bManager));
+            }
+            catch (Exception ex) {
+                throw new ControllerException("KlantController: GetBestelling(id) - gefaald", ex);
+            }
+        }
 
-        #endregion
+        //Post
+        [HttpPost]
+        public ActionResult<BestellingRESTOutputTDO> PostBestelling([FromBody] BestellingRESTInputTDO tdo) {
+            try {
+                Klant k = new Klant(tdo.KlantID, tdo.Naam, tdo.Adres);
+                Bestelling b = new Bestelling(tdo.Product, tdo.Aantal, k);
+                bRepo.VoegBestellingToe(b);
+                return CreatedAtAction(nameof(PostBestelling), new { KlantId = k.KlantID }, k);
+
+            }
+            catch (Exception ex) {
+
+                throw new ControllerException("KlantController: PostBestelling - gefaald", ex);
+            }
+        }
 
 
-    }
+        //Delete
+        [HttpDelete("{id}")]
+        public ActionResult DeleteBestelling(int id) {
+            try {
+                if (!bRepo.BestaatBestelling(id)) {
+                    return NotFound();
+                }
+
+                bRepo.VerwijderBestelling(bRepo.GetBestellingKlant(id));
+
+                return NoContent();
+            }
+            catch (Exception ex) {
+                throw new ControllerException("KlantController: DeleteBestelling - gefaald", ex);
+            }
+        }
+
+
+        //Put
+        [HttpPut("{id}")]
+        public ActionResult PutBestelling(int id, [FromBody] Bestelling  bestelling) {
+            try {
+                if (bestelling == null || bestelling.BestellingID != id) {
+                    return BadRequest();
+                }
+
+                if (!bRepo.BestaatBestelling(id)) {
+                    bRepo.VoegBestellingToe(bestelling);
+                    return CreatedAtAction(nameof(GetBestelling), new { id = bestelling.BestellingID }, bestelling);
+                }
+
+                var besteldb = bRepo.GetBestellingKlant(id);
+                bRepo.UpdateBestelling(bestelling);
+                return new NoContentResult();
+            }
+            catch (Exception ex) {
+                throw new ControllerException("KlantController: PutBestelling - gefaald", ex);
+            }
+            #endregion
+
+
+        }
 }

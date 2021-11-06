@@ -4,7 +4,11 @@ namespace DataLayer {
     public static class DBConnection {
         private static SqlConnection _sqlConnection = null;
 
-        public static SqlConnection Connection { get { if (_sqlConnection == null) { _sqlConnection = CreateConnection(); } return _sqlConnection; } }
+        public static SqlConnection Connection { get 
+                { if (_sqlConnection == null) 
+                    { _sqlConnection = CreateConnection();
+                } return _sqlConnection; 
+            } }
 
 
         public static SqlConnection CreateConnection() {

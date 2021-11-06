@@ -32,10 +32,10 @@ namespace BusinessLayer.Managers {
             }
         }
 
-        public Klant GetKlant(int id) {
+        public Klant GetKlant(Klant klant) {
             try {
-                if (id <= 0) throw new KlantException("KlantManager: GetKlant(id) - Klant is null");
-                return repo.GetKlant(id);
+                if (klant.KlantID <= 0) throw new KlantException("KlantManager: GetKlant(id) - Klant is null");
+                return repo.GetKlant(klant.KlantID);
             }catch(Exception ex) {
                 throw new KlantException("KlantManager: GetKlant - gefaald", ex);
             }

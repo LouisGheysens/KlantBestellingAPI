@@ -2,7 +2,6 @@ C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\bin\Debug\net5.0\BusinessLaye
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\bin\Debug\net5.0\BusinessLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\bin\Debug\net5.0\ref\BusinessLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\bin\Debug\net5.0\BusinessLayer.pdb
-C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.csproj.AssemblyReference.cache
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.AssemblyInfoInputs.cache
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.AssemblyInfo.cs

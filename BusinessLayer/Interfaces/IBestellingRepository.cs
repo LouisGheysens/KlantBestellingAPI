@@ -13,6 +13,7 @@ namespace BusinessLayer.Interfaces {
         void VerwijderBestelling(Bestelling bestelling);
         void UpdateBestelling(Bestelling bestelling);
         List<Bestelling> GetBestellingKlant(int id);
+        bool BestaatBestelling(int id);
     }
 
 

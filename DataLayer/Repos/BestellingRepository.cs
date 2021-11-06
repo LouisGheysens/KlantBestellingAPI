@@ -9,6 +9,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessLayer.Enums;
 
 namespace DataLayer.Repos {
     public class BestellingRepository: IBestellingRepository {
@@ -24,6 +25,7 @@ namespace DataLayer.Repos {
             return connection;
         }
 
+        
         public bool BestaatBestelling(Bestelling bestelling) {
             SqlConnection conn = getConnection();
             string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @BestellingId";
@@ -43,6 +45,35 @@ namespace DataLayer.Repos {
                 catch (Exception ex) {
                     throw new BestellingRepositoryADOException("Bestellingrepository: BestaatBestelling - gefaald!", ex);
                 }
+                finally {
+                    conn.Close();
+                }
+            }
+        }
+
+
+        public bool BestaatBestelling(int id) {
+                SqlConnection conn = getConnection();
+            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @id";
+            using (SqlCommand cmd = conn.CreateCommand()) {
+                conn.Open();
+                try {
+                    bool result = false;
+                    cmd.CommandText = query;
+
+                    cmd.Parameters.Add(new SqlParameter("@id", System.Data.SqlDbType.Int));
+                    cmd.Parameters["@id"].Value = id;
+
+                    Console.WriteLine();
+                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
+                    return result;
+                }
+                catch (Exception ex) {
+                    throw new BestellingRepositoryADOException("Bestellingrepository: BestaatBestelling(id) - gefaald!", ex);
+                }
+                finally {
+                    conn.Close();
+                }
             }
         }
 
@@ -60,42 +91,44 @@ namespace DataLayer.Repos {
                 catch (Exception ex) {
                     throw new BestellingRepositoryADOException("Bestellingrepository: GetBestelling(id) - gefaald!",ex);
                 }
+                finally {
+                    conn.Close();
+                }
             }
         }
 
         public List<Bestelling> GetBestellingKlant(int id) {
-            throw new NotImplementedException();
-        }
-
-        //Klopt!
-        public List<Bestelling> SelecteerBestellingen(int klantId) {
-            SqlConnection conn = getConnection(); ;
-            string query = "SELECT * FROM [dbo].[Klanten] g INNER JOIN [dbo].[Bestellingen] s on g.KlantId = s.KlantId" +
-                "WHERE g.KlantId = @klantId";
-            using(SqlCommand comm = conn.CreateCommand()) {
+            var dic = new Dictionary<int, Bestelling>();
+            string query = "SELECT t1.*, t2.Naam FROM bestellingen t1"
+                + " INNER JOIN Klanten t2 on t1.klantId=t2.Id WHERE t1.klantId=@klantId";
+            SqlConnection conn = getConnection();
+            using (SqlCommand cmd = new SqlCommand(query, conn)) {
                 try {
-                    List<Bestelling> klantlijst = new List<Bestelling>();
+                    List<Bestelling> bestellingen = new List<Bestelling>();
                     conn.Open();
-                    comm.Parameters.AddWithValue("@klantId", klantId);
-                    IDataReader datareader = comm.ExecuteReader();
-                    Klant k = null;
+                    cmd.Parameters.Add(new SqlParameter("@klantId", id));
+                    IDataReader datareader = cmd.ExecuteReader();
+                    Klant klant = null;
                     while (datareader.Read()) {
-                        if(k == null) {
-                            k = new Klant((string)datareader["Naam"], (string)datareader["Adres"]);
+                        if (klant == null) {
+                            klant = new Klant((string)datareader["Naam"], (string)datareader["Adres"]);
                         }
-                        Bestelling bestelling = new Bestelling((int)datareader["Id"], BusinessLayer.Enums.Bier.Duvel, (int)datareader["Aantal"], k); ;
-                        klantlijst.Add(bestelling);
+
+                        var prod = (Bier)Enum.Parse(typeof(Bier), datareader["Product"].ToString(), true);
+                        Bestelling best = new Bestelling(prod, (int)datareader["aantal"], klant);
+
                     }
-                    datareader.Close();
-                    return klantlijst;
-               }catch(Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: SelecteeerBestellingen - gefaald!", ex);
+                    return bestellingen;
+                }
+                catch (Exception ex) {
+                    throw new BestellingRepositoryADOException("Bestellingrepository: GetBestellingKlant(id) - gefaald", ex);
                 }
                 finally {
                     conn.Close();
                 }
             }
         }
+
 
         //Klopt!
         public void UpdateBestelling(Bestelling bestelling) {
@@ -150,9 +183,12 @@ namespace DataLayer.Repos {
             using (SqlCommand cmd = conn.CreateCommand()) {
                 try {
                     cmd.CommandText = query;
-                    cmd.Parameters.AddWithValue("@KlantId", bestelling.Klant.KlantID);
-                    cmd.Parameters.AddWithValue("@Product", bestelling.Product);
-                    cmd.Parameters.AddWithValue("@Aantal", bestelling.Aantal);
+                    cmd.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@Product", SqlDbType.NVarChar));
+                    cmd.Parameters.Add(new SqlParameter("@Aantal", SqlDbType.Int));
+                    cmd.Parameters["KlantId"].Value = bestelling.Klant.KlantID;
+                    cmd.Parameters["@Product"].Value = bestelling.Product;
+                    cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("Bestelling werd toegevoegd!");
                 }
@@ -164,5 +200,5 @@ namespace DataLayer.Repos {
                     }
                 }
             }
-        }
+    }
     }

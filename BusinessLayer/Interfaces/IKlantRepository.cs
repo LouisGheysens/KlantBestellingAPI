@@ -14,5 +14,6 @@ namespace BusinessLayer.Interfaces {
         void UpdateKlant(Klant klant);
         Klant GetKlant(int id);
         List<Klant> SelecteerKlanten();
+        List<Klant> SelecteerKlant(Bestelling b);
     }
 }

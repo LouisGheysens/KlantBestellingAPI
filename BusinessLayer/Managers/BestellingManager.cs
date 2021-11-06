@@ -15,9 +15,22 @@ namespace BusinessLayer.Managers {
 
         public bool BestaatBestelling(Bestelling bestelling) {
             if (bestelling == null) throw new BestellingException("BestellingManager - BestaatBestelling - Bestelling is null!");
-            if (bestelling.BestellingID <= 0) return false;
-            else
-                return false;
+            switch (bestelling.BestellingID) {
+                case <= 0:
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
+
+        public bool BestaatBestelling(int id) {
+            switch (id) {
+                case <= 0:
+                    return false;
+                default:
+                    return false;
+            }
         }
 
         public List<Bestelling> GetBestellingKlant(int id) {

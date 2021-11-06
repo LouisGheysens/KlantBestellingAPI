@@ -30,17 +30,17 @@ namespace BusinessLayer.Models {
         }
 
         public void Zetid(int id) {
-            if (id <= 0) throw new KlantException("Klant - ZetId - ID is geen 0!");
+            //if (id <= 0) throw new KlantException("Klant - ZetId - ID klopt niet!");
             this.KlantID = id;
         }
 
         public void ZetNaam(string naam) {
-            if (string.IsNullOrWhiteSpace(naam)) throw new KlantException("Klant - ZetNaam -  Naam heeft 0 karakters!");
+            //if (string.IsNullOrWhiteSpace(naam)) throw new KlantException("Klant - ZetNaam -  Naam heeft 0 karakters!");
             this.Naam = naam;
         }
 
         public void ZetAdres(string adres) {
-            if (string.IsNullOrWhiteSpace(adres) || adres.Length < 10) throw new KlantException("Klant - ZetAdres - Adres heeft te weinig karakters!");
+            //if (string.IsNullOrWhiteSpace(adres) || adres.Length < 10) throw new KlantException("Klant - ZetAdres - Adres heeft te weinig karakters!");
             this.Adres = adres;
         }
 

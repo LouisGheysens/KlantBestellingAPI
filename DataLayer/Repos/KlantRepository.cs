@@ -70,31 +70,20 @@ namespace DataLayer.Repos {
             }
         }
 
+        //Toon klant
         public Klant GetKlant(int id) {
             SqlConnection connection = getConnection();
-            string query = "SELECT * FROM dbo.Klanten k LEFT JOIN dbo.Bestellingen b ON k.BestellingId=b.Id WHERE Id=@Id";
+            string query = "SELECT * FROM dbo.Klanten WHERE KlantId=@KlantId";
             using (SqlCommand command = connection.CreateCommand()) {
                 try {
-                    command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int));
-                    command.Parameters["@Id"].Value = id;
+                    command.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
+                    command.Parameters["@KlantId"].Value = id;
                     command.CommandText = query;
                     connection.Open();
-                    Klant klant = null;
-                    Bestelling bestelling = null;
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read()) {
-                        if (klant == null) {
-                            string naam = (string)reader["Naam"];
-                            string adres = (string)reader["Adres"];
-                            klant = new Klant(id, naam, adres);
-                        }
-                        if (!reader.IsDBNull(reader.GetOrdinal("Id"))) {
-                            int aantal = (int)reader["Aantal"];
-                            string product = (string)reader["Product"];
-                            bestelling = new Bestelling((Bier)Enum.Parse(typeof(Enum), product), aantal, klant);
-                        }
-                        //klant.VoegBestellingToe(bestelling);
-                    }
+                    IDataReader reader = command.ExecuteReader();
+                    reader.Read();
+                    Klant klant = new Klant((int)reader["KlantId"], (string)reader["Naam"], (string)reader["Adres"]);
+                    reader.Close();
                     return klant;
                 }
                 catch (Exception ex) {
@@ -175,7 +164,6 @@ namespace DataLayer.Repos {
             }
         }
 
-        //Klopt!
         public Klant VoegKlantToe(Klant klant) {
             SqlConnection conn = getConnection();
             string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres)";
@@ -183,8 +171,10 @@ namespace DataLayer.Repos {
                 try {
                     conn.Open();
                     cmd.CommandText = query;
-                    cmd.Parameters.AddWithValue("@Naam", klant.Naam);
-                    cmd.Parameters.AddWithValue("@Adres", klant.Adres);
+                    cmd.Parameters.Add(new SqlParameter("@Naam", SqlDbType.NVarChar));
+                    cmd.Parameters.Add(new SqlParameter("@Adres", SqlDbType.NVarChar));
+                    cmd.Parameters["@Naam"].Value = klant.Naam;
+                    cmd.Parameters["@Adres"].Value = klant.Adres;
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("Klant werd toegevoegd!");
                 }
@@ -197,6 +187,10 @@ namespace DataLayer.Repos {
                 }
             }
             return klant;
+        }
+
+        public List<Klant> SelecteerKlant(Bestelling b) {
+            throw new NotImplementedException();
         }
     }
 }
