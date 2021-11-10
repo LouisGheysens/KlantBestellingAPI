@@ -43,7 +43,7 @@ namespace API.Controllers {
                 return Ok(MapFromDomain.MapFromKlantDomain(url, klant, bManager));
             }
             catch(Exception ex) {
-                throw new ControllerException("KlantController: BestaatKlant(id) - gefaald", ex);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -51,13 +51,17 @@ namespace API.Controllers {
         [HttpPost]
         public ActionResult<KlantRESTOutputTDO> PostKlant([FromBody] KlantRESTInputTDO tdo) {
             try {
+                if(tdo == null) {
+                    throw new ControllerException("KlantController: PostKlant - geen klant ter beschikking");
+                }
+
                 Klant k = new Klant(tdo.KlantID, tdo.Naam, tdo.Adres); ;
                 repo.VoegKlantToe(k);
-                return CreatedAtAction(nameof(PostKlant), new { KlantId = k.KlantID }, k);
+                return CreatedAtAction(nameof(GetKlant), new { KlantId = k.KlantID }, k);
 
             }catch(Exception ex) {
-                
-                throw new ControllerException("KlantController: PostKlant - gefaald", ex);
+
+                return BadRequest(ex.Message);
             }
         }
 
@@ -102,8 +106,8 @@ namespace API.Controllers {
 
         #region Bestelling
         //Get
-        [HttpGet("{id}")]
-        public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id) {
+        [HttpGet("{id}/Bestelling/{BestellingID}")]
+        public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id, int BestellingID) {
             try {
                 var bestelling = bRepo.GetBestellingKlant(id);
                 return Ok(MapFromDomain.MapFromBestellingDomain(url, klant, bManager));
@@ -134,7 +138,7 @@ namespace API.Controllers {
         [HttpDelete("{id}")]
         public ActionResult DeleteBestelling(int id) {
             try {
-                if (!bRepo.BestaatBestelling(id)) {
+                if (!bRepo.BestaatBestellingBijKlant(id)) {
                     return NotFound();
                 }
 
@@ -156,7 +160,7 @@ namespace API.Controllers {
                     return BadRequest();
                 }
 
-                if (!bRepo.BestaatBestelling(id)) {
+                if (!bRepo.BestaatBestellingBijKlant(id)) {
                     bRepo.VoegBestellingToe(bestelling);
                     return CreatedAtAction(nameof(GetBestelling), new { id = bestelling.BestellingID }, bestelling);
                 }

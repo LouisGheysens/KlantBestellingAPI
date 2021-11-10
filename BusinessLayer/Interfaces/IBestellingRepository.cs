@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 namespace BusinessLayer.Interfaces {
     public interface IBestellingRepository {
 
-        void VoegBestellingToe(Bestelling bestelling);
-        bool BestaatBestelling(Bestelling bestelling);
-        void VerwijderBestelling(Bestelling bestelling);
+        Bestelling VoegBestellingToe(Bestelling bestelling);
+        void VerwijderBestelling(int id);
         void UpdateBestelling(Bestelling bestelling);
-        List<Bestelling> GetBestellingKlant(int id);
-        bool BestaatBestelling(int id);
+        IEnumerable<Bestelling> GetBestellingKlant(int BestellingId);
+        bool BestaatBestellingBijKlant(int BestellingId);
+        Bestelling GeefBestellingWeer(int id);
+        bool BestaatBestelling(Bestelling bestelling);
     }
 
 

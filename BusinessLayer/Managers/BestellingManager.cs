@@ -33,7 +33,23 @@ namespace BusinessLayer.Managers {
             }
         }
 
-        public List<Bestelling> GetBestellingKlant(int id) {
+        public Bestelling GeefBestellingWeer(int id) {
+            try {
+                return repo.GeefBestellingWeer(id);
+            }catch(Exception ex) {
+                throw new BestellingException("BestellingManager: GeefBestellingWeer(id) - failed", ex);
+            }
+        }
+
+        public bool BestaatBestellingBijKlant(int id) {
+            try {
+                return repo.BestaatBestellingBijKlant(id);
+            }catch(Exception ex) {
+                throw new BestellingException("BestellingManager: BetstaatBestellingBijKlant(id) - failed", ex);
+            }
+        }
+
+        public IEnumerable<Bestelling> GetBestellingKlant(int id) {
             try {
                 if (id <= 0) throw new BestellingException("BestellingManager: GetBestellingKlant - Id is kleiner of gelijk aan 0!");
                 return repo.GetBestellingKlant(id);
@@ -42,24 +58,22 @@ namespace BusinessLayer.Managers {
             }
         }
 
-        public void UpdateBestelling(Bestelling bestelling) {
-            try {
-                if (bestelling == null) throw new BestellingException("BestellingManager - UpdateBestelling - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - UpdateBestelling - Bestelling bestaat niet");
-                else
-                    repo.UpdateBestelling(bestelling);
-            }
-            catch (Exception ex) {
-                throw new BestellingException("BestellingManager: UpdateBestelling - gefaald", ex);
-            }
+        public Bestelling UpdateBestelling(Bestelling bestelling) {
+
+                if (bestelling == null) throw new BestellingException("BestellingManager: UpdateBestelling - bestelling is null");
+                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager: UpdateBestelling - bestelling bestaat niet!");
+                Bestelling bestelDatabaseObject = GeefBestellingWeer(bestelling.BestellingID);
+                if (bestelDatabaseObject == bestelling) throw new BestellingException("BestellingManager: UpdateBestelling - geen verschillen!");
+                repo.UpdateBestelling(bestelling);
+                return bestelling;
         }
 
-        public void VerwijderBestelling(Bestelling bestelling) {
+        public void VerwijderBestelling(int bestellingId) {
             try {
-                if (bestelling == null) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - VerwijderBestelling - Bestelling bestaat niet");
+                if (bestellingId == null) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
+                if (!repo.BestaatBestellingBijKlant(bestellingId)) throw new BestellingException("BestellingManager - VerwijderBestelling - Bestelling bestaat niet");
                 else
-                    repo.VerwijderBestelling(bestelling);
+                    repo.VerwijderBestelling(bestellingId);
             }
             catch (Exception ex) {
                 throw new BestellingException("BestellingManager: VerwijderBestelling - gefaald", ex);

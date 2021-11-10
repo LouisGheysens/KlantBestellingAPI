@@ -192,5 +192,13 @@ namespace DataLayer.Repos {
         public List<Klant> SelecteerKlant(Bestelling b) {
             throw new NotImplementedException();
         }
+
+        public void VerwijderKlant(int id) {
+            throw new NotImplementedException();
+        }
+
+        Klant IKlantRepository.UpdateKlant(Klant klant) {
+            throw new NotImplementedException();
+        }
     }
 }

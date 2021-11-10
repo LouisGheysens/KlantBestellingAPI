@@ -15,17 +15,13 @@ namespace API.Models.Output {
 
         public int AantalBestellingen { get; private set; }
 
-        private List<Bestelling> _Bestellingen = new List<Bestelling>();
+        private List<string> _Bestellingen = new List<string>();
 
-        public KlantRESTOutputTDO(int id, string naam, string adres) {
+        public KlantRESTOutputTDO(int id, string naam, string adres, List<string> bestelling) {
             this.KlantID = id;
             this.Naam = naam;
             this.Adres = adres;
-        }
-
-        public KlantRESTOutputTDO(int id, string naam, string adres, int aantalbestellingen, List<Bestelling> bestellingen): this(id, naam, adres) {
-            this.AantalBestellingen = aantalbestellingen;
-            this._Bestellingen = bestellingen;
+            this._Bestellingen = bestelling;
         }
     }
 }

@@ -22,9 +22,9 @@ namespace API.Mappers {
         }
 
         //Bestelling
-        public static Bestelling MapToBestellingDomain(BestellingRESTInputTDO tdo) {
+        public static Bestelling MapToBestellingDomain(BestellingRESTInputTDO tdo, Klant k) {
             try {
-                Bestelling bestelling = new Bestelling(tdo.Product, tdo.Aantal, tdo.Klant);
+                Bestelling bestelling = new BestellingRESTOutputTDO.
                 return bestelling;
             }
             catch (Exception ex) {

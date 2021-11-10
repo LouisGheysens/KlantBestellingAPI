@@ -25,131 +25,36 @@ namespace DataLayer.Repos {
             return connection;
         }
 
-        
-        public bool BestaatBestelling(Bestelling bestelling) {
+
+        public bool BestaatBestellingBijKlant(int BestellingId) {
             SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @BestellingId";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
+            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @id";
+            using(SqlCommand cmd = new(query, conn)) {
                 try {
-                    bool result = false;
-                    cmd.CommandText = query;
-
-                    cmd.Parameters.Add(new SqlParameter("@BestellingId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
-
-                    Console.WriteLine();
-                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
-                    return result;
-                }
-                catch (Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: BestaatBestelling - gefaald!", ex);
-                }
-                finally {
-                    conn.Close();
-                }
-            }
-        }
-
-
-        public bool BestaatBestelling(int id) {
-                SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Bestellingen] WHERE BestellingId = @id";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
-                try {
-                    bool result = false;
-                    cmd.CommandText = query;
-
-                    cmd.Parameters.Add(new SqlParameter("@id", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@id"].Value = id;
-
-                    Console.WriteLine();
-                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
-                    return result;
-                }
-                catch (Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: BestaatBestelling(id) - gefaald!", ex);
-                }
-                finally {
-                    conn.Close();
-                }
-            }
-        }
-
-        public void GetBestelling(int id) {
-            SqlConnection conn = getConnection();
-            string query = "SELECT * FROM [WebApi].[dbo].[Bestelingen] WHERE BestellingID = @id";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
-                try {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@BestelID", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@BestelID"].Value = id;
-                    Console.WriteLine("GetBestelling - geslaagd!");
-                }
-                catch (Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: GetBestelling(id) - gefaald!",ex);
-                }
-                finally {
-                    conn.Close();
-                }
-            }
-        }
-
-        public List<Bestelling> GetBestellingKlant(int id) {
-            var dic = new Dictionary<int, Bestelling>();
-            string query = "SELECT t1.*, t2.Naam FROM bestellingen t1"
-                + " INNER JOIN Klanten t2 on t1.klantId=t2.Id WHERE t1.klantId=@klantId";
-            SqlConnection conn = getConnection();
-            using (SqlCommand cmd = new SqlCommand(query, conn)) {
-                try {
-                    List<Bestelling> bestellingen = new List<Bestelling>();
-                    conn.Open();
-                    cmd.Parameters.Add(new SqlParameter("@klantId", id));
-                    IDataReader datareader = cmd.ExecuteReader();
-                    Klant klant = null;
-                    while (datareader.Read()) {
-                        if (klant == null) {
-                            klant = new Klant((string)datareader["Naam"], (string)datareader["Adres"]);
-                        }
-
-                        var prod = (Bier)Enum.Parse(typeof(Bier), datareader["Product"].ToString(), true);
-                        Bestelling best = new Bestelling(prod, (int)datareader["aantal"], klant);
-
+                    cmd.Parameters.AddWithValue("@Id", BestellingId);
+                    int newInt = (int)cmd.ExecuteScalar();
+                    if (newInt > 0) {
+                        return true;
                     }
-                    return bestellingen;
-                }
-                catch (Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: GetBestellingKlant(id) - gefaald", ex);
-                }
-                finally {
-                    conn.Close();
+                    else {
+                        return false;
+                    }
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: BestaatBestellingBijKlant(id) - gefaald", ex);
                 }
             }
         }
 
-
-        //Klopt!
-        public void UpdateBestelling(Bestelling bestelling) {
+        public void VerwijderBestelling(int id) {
             SqlConnection conn = getConnection();
-            string query = "UPDATE Bestellingen SET BestellingId=@BestellingId, KlantId=@KlantId, Product=@Product, " +
-                "Aantal=@Aantal WHERE BestellingId=@BestellingId";
-            using(SqlCommand comm = conn.CreateCommand()) {
+            string sql = "DELETE FROM klanten WHERE Id = @Id";
+            using(SqlCommand cmd = new(sql, conn)) {
                 try {
                     conn.Open();
-                    comm.Parameters.Add("@BestellingId", SqlDbType.Int);
-                    comm.Parameters.Add("@KlantId", SqlDbType.Int);
-                    comm.Parameters.Add("@Product", SqlDbType.NVarChar);
-                    comm.Parameters.Add("@Aantal", SqlDbType.Int);
-                    comm.CommandText = query;
-                    comm.Parameters["@BestellingId"].Value = bestelling.BestellingID; ;
-                    comm.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
-                    comm.Parameters["@Product"].Value = bestelling.Product;
-                    comm.Parameters["@Aantal"].Value = bestelling.Aantal;
-                    comm.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
                 }catch(Exception ex) {
-                    throw new BestellingRepositoryADOException("BestellingRepository: UpdateBestelling - gefaald!", ex);
+                    throw new KlantRepositoryADOException("BestellingRepository: VerwijderBestelling(id) gefaald", ex);
                 }
                 finally {
                     conn.Close();
@@ -157,48 +62,131 @@ namespace DataLayer.Repos {
             }
         }
 
-        //Klopt!
-        public void VerwijderBestelling(Bestelling bestelling) {
+
+        public Bestelling VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            try {
-                conn.Open();
-                string sql = $"DELETE FROM Bestellingen WHERE BestellingId = " + bestelling.BestellingID;
-                var updateCommand = new SqlCommand(sql, conn);
-                updateCommand.ExecuteNonQuery();
-                Console.WriteLine("Bestelling werd verwijderd!");
-            }
-            catch (Exception ex) {
-                throw new BestellingRepositoryADOException("Bestellingrepository: VerwijderBestelling - gefaald!", ex);
-            }
-            finally {
-                conn.Close();
-                conn.Dispose();
+            string sql = "INSERT INTO Bestellingen(BestellingId, KlantId, Product, Aantal) VALUES (@BestellingId, @KlantId, @Product, @Aantal)";
+            using(SqlCommand cmd = new(sql, conn)) {
+                try {
+                    conn.Open();
+                    cmd.Parameters.Add("@BestellingId", SqlDbType.Int);
+                    cmd.Parameters.Add("@KlantId", SqlDbType.Int);
+                    cmd.Parameters.Add("@Product", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Aantal", SqlDbType.Int);
+                    cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
+                    cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
+                    cmd.Parameters["@Product"].Value = bestelling.Product;
+                    cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
+                    int integer = decimal.ToInt32((decimal)cmd.ExecuteScalar());
+                    return new Bestelling(bestelling.BestellingID, bestelling.Product, bestelling.Aantal, bestelling.Klant);
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: VoegBestellingToe - gefaald", ex);
+                }
+                finally {
+                    conn.Close();
+                }
             }
         }
 
-        //Klopt
-        public void VoegBestellingToe(Bestelling bestelling) {
+       public void UpdateBestelling(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            string query = "INSERT INTO Bestellingen(KlantId, Product, Aantal)) VALUES(@KlantId, @Product, @Aantal)";
-            using (SqlCommand cmd = conn.CreateCommand()) {
+            string sql = "UPDATE Bestellingen SET BestellingId = @BestellingId, Aantal = @Aantal, KlantId = @KlantId WHERE id = @Id";
+            using (SqlCommand cmd = new(sql, conn)) {
                 try {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@Product", SqlDbType.NVarChar));
-                    cmd.Parameters.Add(new SqlParameter("@Aantal", SqlDbType.Int));
-                    cmd.Parameters["KlantId"].Value = bestelling.Klant.KlantID;
+                    conn.Open();
+                    cmd.Parameters.Add("@BestellingId", SqlDbType.Int);
+                    cmd.Parameters.Add("@KlantId", SqlDbType.Int);
+                    cmd.Parameters.Add("@Product", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Aantal", SqlDbType.Int);
+                    cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
+                    cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
                     cmd.Parameters["@Product"].Value = bestelling.Product;
                     cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("Bestelling werd toegevoegd!");
                 }
                 catch (Exception ex) {
-                    throw new BestellingRepositoryADOException("Bestellingrepository: VoegBestellingToe - gefaald!", ex);
+                    throw new KlantRepositoryADOException("KlantRepository: VoegBestellingToe - gefaald", ex);
                 }
                 finally {
                     conn.Close();
-                    }
                 }
             }
+        }
+
+        public IEnumerable<Bestelling> GetBestellingKlant(int id) {
+            SqlConnection conn = getConnection();
+            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b ON K.Id = b.KlantId WHERE k.Id = @id";
+            using(SqlCommand comm = new(sql, conn)) {
+                try {
+                    conn.Open();
+                    comm.Parameters.AddWithValue("@id", id);
+                    IDataReader reader = comm.ExecuteReader();
+                    Klant k = null;
+                    List<Bestelling> bestellingen = new List<Bestelling>();
+                    while (reader.Read()) {
+                        if(k == null) {
+                            k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
+                        }
+                        var product = (Bier)Enum.Parse(typeof(Bier), reader["Product"].ToString(), true);
+                        Bestelling b = new Bestelling((int)reader["Id"], product, (int)reader["Aantal"], k);
+                        bestellingen.Add(b);
+                    }
+                    reader.Close();
+                    return bestellingen;
+                }catch(Exception ex) {
+                    throw new BestellingRepositoryADOException("BestellingRepository: GetBestellingKlant(id) - gefaald", ex);
+                }
+                finally {
+                    conn.Close();
+                }
+            }
+        }
+
+        public Bestelling GeefBestellingWeer(int id) {
+            SqlConnection conn = getConnection();
+            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b  ON k.Id = b.KlantId WHERE k.Id = @id";
+            Klant k = null;
+            using(SqlCommand cmd = new(sql, conn)) {
+                try {
+                    conn.Open();
+                    cmd.Parameters.Add("@Id", SqlDbType.Int);
+                    cmd.Parameters["@Id"].Value = id;
+                    IDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    if(k == null) {
+                        k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
+                    }
+                    var product = (Bier)Enum.Parse(typeof(Bier), reader["Product"].ToString(), true);
+                    Bestelling b = new Bestelling((int)reader["Id"], product, (int)reader["Aantal"], k);
+                    reader.Close();
+                    return b;
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("BestellingRepository: GeefBestellingWeer(id) - gefaald", ex);
+                }
+                finally {
+                    conn.Close();
+                }
+            }
+        }
+
+        public bool BestaatBestelling(Bestelling bestelling) {
+            SqlConnection conn = getConnection();
+            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @id";
+            using (SqlCommand cmd = new(query, conn)) {
+                try {
+                    cmd.Parameters.AddWithValue("@Id", bestelling.BestellingID);
+                    int newInt = (int)cmd.ExecuteScalar();
+                    if (newInt > 0) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                catch (Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: BestaatBestellingBijKlant(id) - gefaald", ex);
+                }
+            }
+        }
     }
     }

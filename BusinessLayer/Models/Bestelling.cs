@@ -41,17 +41,5 @@ namespace BusinessLayer {
         public override string ToString() {
             return $"ID: {BestellingID}\nKlant: {Klant}\n Drank: {Product}\nAantal: {Aantal}";
         }
-
-        public override bool Equals(object obj) {
-            return obj is Bestelling bestelling &&
-                   BestellingID == bestelling.BestellingID &&
-                   Product == bestelling.Product &&
-                   Aantal == bestelling.Aantal &&
-                   EqualityComparer<Klant>.Default.Equals(Klant, bestelling.Klant);
-        }
-
-        public override int GetHashCode() {
-            return HashCode.Combine(BestellingID, Product, Aantal, Klant);
-        }
     }
 }

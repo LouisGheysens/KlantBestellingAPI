@@ -11,15 +11,16 @@ namespace API.Models.Output {
 
         public Klant Klant { get; private set; }
 
-        public int Aantal { get; private set; }
-
         public Bier Product { get; private set; }
 
-        public BestellingRESTOutputTDO(int bestellingID, Klant klant, int aantal, Bier product) {
+        public int Aantal { get; private set; }
+
+
+        public BestellingRESTOutputTDO(int bestellingID, Klant klant, Bier product, int aantal) {
             this.BestellingID = bestellingID;
             this.Klant = klant;
-            this.Aantal = aantal;
             this.Product = product;
+            this.Aantal = aantal;
         }
     }
 }
