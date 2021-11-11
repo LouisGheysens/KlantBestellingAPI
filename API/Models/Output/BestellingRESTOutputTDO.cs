@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace API.Models.Output {
     public class BestellingRESTOutputTDO {
-        public int BestellingID { get; set; }
+        public string BestellingID { get; set; }
 
-        public Klant Klant { get; private set; }
+        public string KlantId { get; private set; }
 
-        public Bier Product { get; private set; }
+        public string Product { get; private set; }
 
         public int Aantal { get; private set; }
 
 
-        public BestellingRESTOutputTDO(int bestellingID, Klant klant, Bier product, int aantal) {
+        public BestellingRESTOutputTDO(string bestellingID, string klant, string product, int aantal) {
             this.BestellingID = bestellingID;
-            this.Klant = klant;
+            this.KlantId = klant;
             this.Product = product;
             this.Aantal = aantal;
         }

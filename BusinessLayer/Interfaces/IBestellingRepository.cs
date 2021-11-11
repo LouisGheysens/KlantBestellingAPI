@@ -15,6 +15,7 @@ namespace BusinessLayer.Interfaces {
         bool BestaatBestellingBijKlant(int BestellingId);
         Bestelling GeefBestellingWeer(int id);
         bool BestaatBestelling(Bestelling bestelling);
+        bool HeeftBestelling(int id);
     }
 
 

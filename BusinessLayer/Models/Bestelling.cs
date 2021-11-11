@@ -17,16 +17,22 @@ namespace BusinessLayer {
 
         public Klant Klant { get; set; }
 
-        public Bestelling(int id, Bier product, int aantal, Klant k) {
+        public Bestelling(int id, int product, int aantal, Klant k) {
             ZetId(id);
-            this.Product = product;
+            ZetProduct(product);
             ZetAantal(aantal);
         }
 
-
-        public Bestelling(Bier product, int aantal, Klant k) {
-            this.Product = product;
+        public Bestelling(int product, int aantal, Klant k) {
+            ZetProduct(product);
             ZetAantal(aantal);
+        }
+
+        public void ZetProduct(int product) {
+            if(!Enum.IsDefined(typeof(Bier), (Bier)product)) {
+                throw new BestellingException("Bestelling: ZetProduct - gefaald");
+            }
+            Product = (Bier)product;
         }
         public void ZetId(int id) {
             if (id <= 0) throw new BestellingException("Bestelling - ZetId - ID is 0!");

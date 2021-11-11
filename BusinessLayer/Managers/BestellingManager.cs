@@ -70,7 +70,7 @@ namespace BusinessLayer.Managers {
 
         public void VerwijderBestelling(int bestellingId) {
             try {
-                if (bestellingId == null) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
+                if (bestellingId <= 0) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
                 if (!repo.BestaatBestellingBijKlant(bestellingId)) throw new BestellingException("BestellingManager - VerwijderBestelling - Bestelling bestaat niet");
                 else
                     repo.VerwijderBestelling(bestellingId);
@@ -80,15 +80,23 @@ namespace BusinessLayer.Managers {
             }
         }
 
-        public void VoegBestellingToe(Bestelling bestelling) {
+        public Bestelling VoegBestellingToe(Bestelling bestelling) {
             try {
                 if (bestelling == null) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling is null!");
                 if (repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling bestaat al");
                 else
-                    repo.VoegBestellingToe(bestelling);
+                    return repo.VoegBestellingToe(bestelling);
             }
             catch (Exception ex) {
                 throw new BestellingException("BestellingManager: VoegBestellingToe - gefaald", ex);
+            }
+        }
+
+        public bool HeeftBestelling(int id) {
+            try {
+                return repo.HeeftBestelling(id);
+            }catch(Exception ex) {
+                throw new BestellingException("BestellingManager: HeeftBestelling - gefaald", ex);
             }
         }
     }

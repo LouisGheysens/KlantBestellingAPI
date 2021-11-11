@@ -14,9 +14,9 @@ namespace API.Mappers {
         public static KlantRESTOutputTDO MapFromKlantDomain(string url, Klant klant, BestellingManager bmanager) {
             try {
                 string klantURL = $"{url}/klant/{klant.KlantID}";
-                List<Bestelling> bestellingen = bmanager.GetBestellingKlant(klant.KlantID);
-                KlantRESTOutputTDO dto = new KlantRESTOutputTDO(klant.KlantID, klant.Naam, klant.Adres, bestellingen.Count(), bestellingen);
-                return dto;
+                List<string> bestellingen = bmanager.GetBestellingKlant(klant.KlantID).Select(x => klantURL = $"/Bestelling/{x.BestellingID}").ToList();
+                KlantRESTOutputTDO klantREST = new KlantRESTOutputTDO(klantURL, klant.Naam, klant.Adres, bestellingen);
+                return klantREST;
             }
             catch (Exception ex) {
 
@@ -25,12 +25,12 @@ namespace API.Mappers {
         }
 
         //Bestellling
-        public static BestellingRESTOutputTDO MapFromBestellingDomain(string url, Bestelling best, KlantManager klantmanager) {
+        public static BestellingRESTOutputTDO MapFromBestellingDomain(string url, Bestelling best) {
             try {
-                string bestelUrl = $"{url}/klant/{best.BestellingID}";
-                List<Klant> klanten = klantmanager.SelecteerKlanten(best.Klant.KlantID);
-                BestellingRESTOutputTDO dto = new BestellingRESTOutputTDO(best.BestellingID, best.Klant.KlantID, best.Aantal, best.Product);
-                return dto;
+                string klantUrl = $"{url}/klant/{best.Klant.KlantID}";
+                string bestelUrl = klantUrl + $"/Bestelling/{best.BestellingID}";
+                BestellingRESTOutputTDO bestelREST = new BestellingRESTOutputTDO(bestelUrl, klantUrl, best.Product.ToString(), best.Aantal);
+                return bestelREST;
             }
             catch (Exception ex) {
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Mappers {
     public class MapToDomain {
-        //PROPERTIES VAN RESTOUTPUTTDO WORDEN HIERIN VERWERKT!!!
+
         //Klant
         public static Klant MapToKlantDomain(KlantRESTInputTDO tdo) {
             try {
@@ -24,7 +24,7 @@ namespace API.Mappers {
         //Bestelling
         public static Bestelling MapToBestellingDomain(BestellingRESTInputTDO tdo, Klant k) {
             try {
-                Bestelling bestelling = new BestellingRESTOutputTDO.
+                Bestelling bestelling = new Bestelling(tdo.Product, tdo.Aantal, k);
                 return bestelling;
             }
             catch (Exception ex) {

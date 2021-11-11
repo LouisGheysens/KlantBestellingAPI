@@ -25,61 +25,34 @@ namespace DataLayer.Repos {
             return connection;
         }
 
-        //Klopt!
-        public bool BestaatKlant(Klant klant) {
-            SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
-                try {
-                    bool result = false;
-                    cmd.CommandText = query;
-
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
-
-                    Console.WriteLine();
-                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
-                    return result;
-                }
-                catch (Exception ex) {
-                    throw new Exception(ex.Message);
-                }
-            }
-        }
-
         public bool BestaatKlantId(int id) {
             SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(1) FROM [WebApi].[dbo].[Klanten] WHERE KlantId = @KlantId";
-            using (SqlCommand cmd = conn.CreateCommand()) {
-                conn.Open();
+            string query = "SELECT COUNT(*) FROM klanten WHERE Id=@Id";
+            using (SqlCommand cmd = new(query, conn)) {
                 try {
-                    bool result = false;
-                    cmd.CommandText = query;
-
-                    cmd.Parameters.Add(new SqlParameter("@KlantId", System.Data.SqlDbType.Int));
-                    cmd.Parameters["@KlantId"].Value = id;
-
-                    Console.WriteLine();
-                    result = (int)cmd.ExecuteScalar() == 1 ? true : false;
-                    return result;
+                    conn.Open();
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    int r = (int)cmd.ExecuteScalar();
+                    if(r > 0) {
+                        return true;
+                    }
+                    return false;
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepository: BestaatKlatnId(id) - gefaald", ex);
                 }
-                catch (Exception ex) {
-                    throw new Exception(ex.Message);
+                finally {
+                    conn.Close();
                 }
             }
         }
 
-        //Toon klant
         public Klant GetKlant(int id) {
             SqlConnection connection = getConnection();
             string query = "SELECT * FROM dbo.Klanten WHERE KlantId=@KlantId";
-            using (SqlCommand command = connection.CreateCommand()) {
+            using (SqlCommand command = new(query,connection)) {
                 try {
-                    command.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
-                    command.Parameters["@KlantId"].Value = id;
-                    command.CommandText = query;
                     connection.Open();
+                    command.Parameters.AddWithValue("@Id", id);
                     IDataReader reader = command.ExecuteReader();
                     reader.Read();
                     Klant klant = new Klant((int)reader["KlantId"], (string)reader["Naam"], (string)reader["Adres"]);
@@ -94,45 +67,18 @@ namespace DataLayer.Repos {
                 }
             }
         }
-        
-        //Klopt!
-        public List<Klant> SelecteerKlanten() {
-            SqlConnection conn = getConnection();
-            List<Klant> klanten = new List<Klant>();
-            string query = "SELECT * FROM Klanten";
-            using(SqlCommand comm = conn.CreateCommand()) {
-                try {
-                    conn.Open();
-                    comm.CommandText = query;
-                    SqlDataReader r = comm.ExecuteReader();
-                    while (r.Read()) {
-                        klanten.Add(new Klant((string)r["Naam"], (string)r["Adres"]));
-                    }
-                    return klanten;
-                }
-                catch(Exception ex) {
-                    throw new KlantRepositoryADOException("KlantRepository: SelecteerKlanten - gefaald!", ex);
-                }
-                finally {
-                    conn.Close();
-                }
-            }
-        }
 
-        //Klopt!
         public void UpdateKlant(Klant klant) {
             SqlConnection conn = getConnection();
-            string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE KlantId=@KlantId";
-            using(SqlCommand cmd = conn.CreateCommand()) {
+            string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE Id=@Id";
+            using(SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
-                    cmd.Parameters.Add("@KlantId", SqlDbType.Int);
                     cmd.Parameters.Add("@Naam", SqlDbType.NVarChar);
                     cmd.Parameters.Add("@Adres", SqlDbType.NVarChar);
-                    cmd.CommandText = query;
-                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
                     cmd.Parameters["@Naam"].Value = klant.Naam;
                     cmd.Parameters["@Adres"].Value = klant.Adres;
+                    cmd.Parameters["@Id"].Value = klant.KlantID;
                     cmd.ExecuteNonQuery();
                 }catch(Exception ex) {
                     throw new KlantRepositoryADOException("KlantRepository: UpdateKlant - gefaald!", ex);
@@ -144,16 +90,14 @@ namespace DataLayer.Repos {
         }
 
         //Klopt!
-        public void VerwijderKlant(Klant klant) {
+        public void VerwijderKlant(int id) {
             SqlConnection conn = getConnection();
-            string query = "DELETE FROM Klanten WHERE KlantId=@KlantId";
+            string query = "DELETE FROM Klanten WHERE Id=@Id";
             using (SqlCommand comm = new(query, conn)) {
                 try {
                     conn.Open();
-                    comm.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
-                    comm.Parameters["@KlantId"].Value = klant.KlantID;
+                    comm.Parameters.AddWithValue("@Id", id);
                     comm.ExecuteNonQuery();
-                    Console.WriteLine("Klant werd verwijderd!");
                 }
                 catch (Exception ex) {
                     throw new KlantRepositoryADOException("Klantrepository: VerwijderKlant - gefaald!", ex);
@@ -166,17 +110,16 @@ namespace DataLayer.Repos {
 
         public Klant VoegKlantToe(Klant klant) {
             SqlConnection conn = getConnection();
-            string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres)";
-            using (SqlCommand cmd = conn.CreateCommand()) {
+            string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres) SELECT SCOPE_IDENTITY()";
+            using (SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqlParameter("@Naam", SqlDbType.NVarChar));
-                    cmd.Parameters.Add(new SqlParameter("@Adres", SqlDbType.NVarChar));
+                    cmd.Parameters.Add("@Naam", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Adres", SqlDbType.NVarChar);
                     cmd.Parameters["@Naam"].Value = klant.Naam;
                     cmd.Parameters["@Adres"].Value = klant.Adres;
-                    cmd.ExecuteNonQuery();
-                    Console.WriteLine("Klant werd toegevoegd!");
+                    int id = decimal.ToInt32((decimal)cmd.ExecuteScalar());
+                    return new Klant(id, klant.Naam, klant.Adres);
                 }
                 catch (Exception ex) {
                     throw new KlantRepositoryADOException("Klantrepository: VoegKlantToe - gefaald!", ex);
@@ -186,19 +129,6 @@ namespace DataLayer.Repos {
                     conn.Close();
                 }
             }
-            return klant;
-        }
-
-        public List<Klant> SelecteerKlant(Bestelling b) {
-            throw new NotImplementedException();
-        }
-
-        public void VerwijderKlant(int id) {
-            throw new NotImplementedException();
-        }
-
-        Klant IKlantRepository.UpdateKlant(Klant klant) {
-            throw new NotImplementedException();
         }
     }
 }

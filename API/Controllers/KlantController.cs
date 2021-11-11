@@ -19,31 +19,24 @@ namespace API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class KlantController : ControllerBase {
-        private string url = "api/klant/";
-        KlantRepository repo = new KlantRepository(@"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True");
-        BestellingRepository repob = new BestellingRepository(@"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True");
-        private readonly IKlantRepository kRepo;
-        private readonly IBestellingRepository bRepo;
-        private readonly BestellingManager bManager;
-        private readonly Klant klant;
-        private readonly KlantManager kManager;
+        private string url = "http://localhost:5000";
+        private readonly BestellingManager _bm;
+        private readonly KlantManager _km;
 
-        public KlantController(IKlantRepository klantservice, IBestellingRepository brepo) {
-            this.kRepo = klantservice;
-            this.bRepo = brepo;
+        public KlantController(BestellingManager bm, KlantManager km) {
+            _bm = bm;
+            _km = km;
         }
 
         #region Klant
-
         //Get
         [HttpGet("{id}")]
         public ActionResult<KlantRESTOutputTDO> GetKlant(int id) {
             try {
-                var klant = kRepo.GetKlant(id);
-                return Ok(MapFromDomain.MapFromKlantDomain(url, klant, bManager));
-            }
-            catch(Exception ex) {
-                return BadRequest(ex.Message);
+                Klant k = _km.GetKlant(id);
+                return Ok(MapFromDomain.MapFromKlantDomain(url, k, _bm));
+            }catch(Exception ex) {
+                return NotFound(ex);
             }
         }
 
@@ -51,129 +44,112 @@ namespace API.Controllers {
         [HttpPost]
         public ActionResult<KlantRESTOutputTDO> PostKlant([FromBody] KlantRESTInputTDO tdo) {
             try {
-                if(tdo == null) {
-                    throw new ControllerException("KlantController: PostKlant - geen klant ter beschikking");
-                }
-
-                Klant k = new Klant(tdo.KlantID, tdo.Naam, tdo.Adres); ;
-                repo.VoegKlantToe(k);
-                return CreatedAtAction(nameof(GetKlant), new { KlantId = k.KlantID }, k);
-
+                Klant k = _km.VoegKlantToe(MapToDomain.MapToKlantDomain(tdo));
+                return CreatedAtAction(nameof(GetKlant), new { id = k.KlantID }, MapFromDomain.MapFromKlantDomain(url, k, _bm));
             }catch(Exception ex) {
-
                 return BadRequest(ex.Message);
-            }
-        }
-
-
-        //Delete
-        [HttpDelete("{id}")]
-        public ActionResult DeleteKlant(int id) {
-            try {
-                if (!kRepo.BestaatKlant(klant)){
-                    return NotFound();
-                }
-
-                kRepo.VerwijderKlant(kRepo.GetKlant(id));
-
-                return NoContent();
-            }catch(Exception ex) {
-                throw new ControllerException("KlantController: DeleteKlant - gefaald", ex);
             }
         }
 
         //Put
         [HttpPut("{id}")]
-        public ActionResult PutKlant(int id, [FromBody] Klant klant) {
+        public ActionResult<KlantRESTOutputTDO> PutKlant(int id, [FromBody] KlantRESTInputTDO tdo) {
             try {
-                if(klant == null || klant.KlantID != id) {
+                if(!_km.BestaatKlant(id) || tdo == null || string.IsNullOrWhiteSpace(tdo.Naam) || string.IsNullOrWhiteSpace(tdo.Adres)) {
                     return BadRequest();
                 }
-
-                if (!kRepo.BestaatKlantId(id)){
-                    kRepo.VoegKlantToe(klant);
-                    return CreatedAtAction(nameof(GetKlant), new { id = klant.KlantID }, klant);
-                }
-
-                var klantDB = kRepo.GetKlant(id);
-                kRepo.UpdateKlant(klant);
-                return new NoContentResult();
+                Klant k = MapToDomain.MapToKlantDomain(tdo);
+                k.Zetid(id);
+                Klant klantDBObject = _km.UpdateKlant(k);
+                return CreatedAtAction(nameof(GetKlant), new { id = klantDBObject.KlantID }, MapFromDomain.MapFromKlantDomain(url, klantDBObject, _bm));
             }catch(Exception ex) {
-                throw new ControllerException("KlantController: PutKlant - gefaald", ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //Delete
+        [HttpDelete("{id}")]
+        public ActionResult<KlantRESTOutputTDO> DeleteKlant(int id) {
+            try {
+                if (_bm.HeeftBestelling(id)) {
+                    return BadRequest("Klant heeft nog een achterliggende bestelling");
+                }
+                _km.VerwijderKlant(id);
+                return NoContent();
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
             }
         }
         #endregion
 
         #region Bestelling
         //Get
-        [HttpGet("{id}/Bestelling/{BestellingID}")]
-        public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id, int BestellingID) {
+        [HttpGet]
+        [Route("{id/Bestelling/{bestellingId")]
+        public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id, int bestellingId) {
             try {
-                var bestelling = bRepo.GetBestellingKlant(id);
-                return Ok(MapFromDomain.MapFromBestellingDomain(url, klant, bManager));
-            }
-            catch (Exception ex) {
-                throw new ControllerException("KlantController: GetBestelling(id) - gefaald", ex);
+                Bestelling b = _bm.GeefBestellingWeer(bestellingId);
+                if(b.Klant.KlantID != id) {
+                    return BadRequest("KlantId komt niet overeen!");
+                }
+                return Ok(MapFromDomain.MapFromBestellingDomain(url, b));
+            }catch(Exception ex) {
+                return NotFound(ex.Message);
             }
         }
 
         //Post
         [HttpPost]
-        public ActionResult<BestellingRESTOutputTDO> PostBestelling([FromBody] BestellingRESTInputTDO tdo) {
+        [Route("{id}/Bestelling/")]
+        public ActionResult<BestellingRESTOutputTDO> PostBestelling(int id, [FromBody] BestellingRESTInputTDO besteltdo) {
             try {
-                Klant k = new Klant(tdo.KlantID, tdo.Naam, tdo.Adres);
-                Bestelling b = new Bestelling(tdo.Product, tdo.Aantal, k);
-                bRepo.VoegBestellingToe(b);
-                return CreatedAtAction(nameof(PostBestelling), new { KlantId = k.KlantID }, k);
-
-            }
-            catch (Exception ex) {
-
-                throw new ControllerException("KlantController: PostBestelling - gefaald", ex);
-            }
-        }
-
-
-        //Delete
-        [HttpDelete("{id}")]
-        public ActionResult DeleteBestelling(int id) {
-            try {
-                if (!bRepo.BestaatBestellingBijKlant(id)) {
-                    return NotFound();
+                Klant k = _km.GetKlant(besteltdo.KlantId);
+                if(k.KlantID != id) {
+                    return BadRequest("KlantId komt niet overeen");
                 }
-
-                bRepo.VerwijderBestelling(bRepo.GetBestellingKlant(id));
-
-                return NoContent();
-            }
-            catch (Exception ex) {
-                throw new ControllerException("KlantController: DeleteBestelling - gefaald", ex);
+                Bestelling b = _bm.VoegBestellingToe(MapToDomain.MapToBestellingDomain(besteltdo, k));
+                return CreatedAtAction(nameof(GetBestelling), new { id = b.Klant.KlantID, bestellingId = b.BestellingID }, MapFromDomain.MapFromBestellingDomain(url, b));
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
             }
         }
-
 
         //Put
-        [HttpPut("{id}")]
-        public ActionResult PutBestelling(int id, [FromBody] Bestelling  bestelling) {
+        [HttpPut]
+        [Route("{id}/Bestelling/{bestellingId")]
+        public ActionResult<BestellingRESTOutputTDO> PutBestelling(int id, int bestellingId, [FromBody] BestellingRESTInputTDO tdo) {
             try {
-                if (bestelling == null || bestelling.BestellingID != id) {
+                if(!_bm.BestaatBestelling(id) || tdo == null) {
                     return BadRequest();
                 }
-
-                if (!bRepo.BestaatBestellingBijKlant(id)) {
-                    bRepo.VoegBestellingToe(bestelling);
-                    return CreatedAtAction(nameof(GetBestelling), new { id = bestelling.BestellingID }, bestelling);
+                Klant k = _km.GetKlant(id);
+                if(k.KlantID != tdo.KlantId) {
+                    return BadRequest("Id komt niet overeen!");
                 }
-
-                var besteldb = bRepo.GetBestellingKlant(id);
-                bRepo.UpdateBestelling(bestelling);
-                return new NoContentResult();
+                Bestelling b = MapToDomain.MapToBestellingDomain(tdo, k);
+                b.ZetId(id);
+                Bestelling bestellingDB = _bm.UpdateBestelling(b);
+                return CreatedAtAction(nameof(GetBestelling), new { id = bestellingDB.Klant.KlantID, bestellingId = bestellingDB.BestellingID }, MapFromDomain.MapFromBestellingDomain(url, b));
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
             }
-            catch (Exception ex) {
-                throw new ControllerException("KlantController: PutBestelling - gefaald", ex);
-            }
-            #endregion
-
-
         }
+
+        //Delete
+        [HttpDelete]
+        [Route("{id}/Bestelling/{bestellingId")]
+        public ActionResult<BestellingRESTOutputTDO> DeleteBestelling(int id, int bestellingId) {
+            try {
+                if (!_km.BestaatKlant(id)) {
+                    return BadRequest("Klant bestaat niet!");
+                }
+                _bm.VerwijderBestelling(bestellingId);
+                return NoContent();
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+        #endregion
+
+    }
 }

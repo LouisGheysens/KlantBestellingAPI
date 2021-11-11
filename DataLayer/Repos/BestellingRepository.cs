@@ -75,10 +75,10 @@ namespace DataLayer.Repos {
                     cmd.Parameters.Add("@Aantal", SqlDbType.Int);
                     cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
                     cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
-                    cmd.Parameters["@Product"].Value = bestelling.Product;
+                    cmd.Parameters["@Product"].Value = (int)bestelling.Product;
                     cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
                     int integer = decimal.ToInt32((decimal)cmd.ExecuteScalar());
-                    return new Bestelling(bestelling.BestellingID, bestelling.Product, bestelling.Aantal, bestelling.Klant);
+                    return new Bestelling(bestelling.BestellingID, (int)bestelling.Product, bestelling.Aantal, bestelling.Klant);
                 }catch(Exception ex) {
                     throw new KlantRepositoryADOException("KlantRepository: VoegBestellingToe - gefaald", ex);
                 }
@@ -127,8 +127,7 @@ namespace DataLayer.Repos {
                         if(k == null) {
                             k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
                         }
-                        var product = (Bier)Enum.Parse(typeof(Bier), reader["Product"].ToString(), true);
-                        Bestelling b = new Bestelling((int)reader["Id"], product, (int)reader["Aantal"], k);
+                        Bestelling b = new Bestelling((int)reader["Id"], (int)reader["Product"], (int)reader["Aantal"], k);
                         bestellingen.Add(b);
                     }
                     reader.Close();
@@ -156,8 +155,7 @@ namespace DataLayer.Repos {
                     if(k == null) {
                         k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
                     }
-                    var product = (Bier)Enum.Parse(typeof(Bier), reader["Product"].ToString(), true);
-                    Bestelling b = new Bestelling((int)reader["Id"], product, (int)reader["Aantal"], k);
+                    Bestelling b = new Bestelling((int)reader["Id"], (int)reader["Product"], (int)reader["Aantal"], k);
                     reader.Close();
                     return b;
                 }catch(Exception ex) {
@@ -185,6 +183,27 @@ namespace DataLayer.Repos {
                 }
                 catch (Exception ex) {
                     throw new KlantRepositoryADOException("KlantRepository: BestaatBestellingBijKlant(id) - gefaald", ex);
+                }
+            }
+        }
+
+        public bool HeeftBestelling(int id) {
+            SqlConnection conn = getConnection();
+            string sql = "SELECT COUNT(*) FROM Bestellingen WHERE KlantId = @Id";
+            using(SqlCommand cmd = new(sql, conn)) {
+                try {
+                    conn.Open();
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    int n = (int)cmd.ExecuteScalar();
+                    if(n > 0) {
+                        return true;
+                    }
+                    return false;
+                }catch(Exception ex) {
+                    throw new KlantRepositoryADOException("KlantRepositort: HeeftBestelling(id) - gefaald", ex);
+                }
+                finally {
+                    conn.Close();
                 }
             }
         }
