@@ -28,7 +28,7 @@ namespace DataLayer.Repos {
 
         public bool BestaatBestellingBijKlant(int BestellingId) {
             SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @id";
+            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @Id";
             using(SqlCommand cmd = new(query, conn)) {
                 try {
                     cmd.Parameters.AddWithValue("@Id", BestellingId);
@@ -65,7 +65,7 @@ namespace DataLayer.Repos {
 
         public Bestelling VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            string sql = "INSERT INTO Bestellingen(BestellingId, KlantId, Product, Aantal) VALUES (@BestellingId, @KlantId, @Product, @Aantal)";
+            string sql = "INSERT INTO Bestellingen(BestellingId, KlantId, Product, Aantal) VALUES (@Id, @KlantId, @Product, @Aantal)";
             using(SqlCommand cmd = new(sql, conn)) {
                 try {
                     conn.Open();
@@ -90,7 +90,7 @@ namespace DataLayer.Repos {
 
        public void UpdateBestelling(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            string sql = "UPDATE Bestellingen SET BestellingId = @BestellingId, Aantal = @Aantal, KlantId = @KlantId WHERE id = @Id";
+            string sql = "UPDATE Bestellingen SET BestellingId = @Id, Aantal = @Aantal, KlantId = @KlantId WHERE id = @Id";
             using (SqlCommand cmd = new(sql, conn)) {
                 try {
                     conn.Open();
@@ -115,11 +115,11 @@ namespace DataLayer.Repos {
 
         public IEnumerable<Bestelling> GetBestellingKlant(int id) {
             SqlConnection conn = getConnection();
-            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b ON K.Id = b.KlantId WHERE k.Id = @id";
+            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b ON K.Id = b.KlantId WHERE k.Id = @Id";
             using(SqlCommand comm = new(sql, conn)) {
                 try {
                     conn.Open();
-                    comm.Parameters.AddWithValue("@id", id);
+                    comm.Parameters.AddWithValue("@Id", id);
                     IDataReader reader = comm.ExecuteReader();
                     Klant k = null;
                     List<Bestelling> bestellingen = new List<Bestelling>();
@@ -143,7 +143,7 @@ namespace DataLayer.Repos {
 
         public Bestelling GeefBestellingWeer(int id) {
             SqlConnection conn = getConnection();
-            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b  ON k.Id = b.KlantId WHERE k.Id = @id";
+            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b  ON k.Id = b.KlantId WHERE k.Id = @Id";
             Klant k = null;
             using(SqlCommand cmd = new(sql, conn)) {
                 try {
@@ -169,7 +169,7 @@ namespace DataLayer.Repos {
 
         public bool BestaatBestelling(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @id";
+            string query = "SELECT COUNT(*) FROM [WebApi].Bestellingen] WHERE Id = @Id";
             using (SqlCommand cmd = new(query, conn)) {
                 try {
                     cmd.Parameters.AddWithValue("@Id", bestelling.BestellingID);

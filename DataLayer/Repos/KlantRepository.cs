@@ -48,7 +48,7 @@ namespace DataLayer.Repos {
 
         public Klant GetKlant(int id) {
             SqlConnection connection = getConnection();
-            string query = "SELECT * FROM dbo.Klanten WHERE KlantId=@KlantId";
+            string query = "SELECT * FROM dbo.Klanten WHERE KlantId=@Id";
             using (SqlCommand command = new(query,connection)) {
                 try {
                     connection.Open();
