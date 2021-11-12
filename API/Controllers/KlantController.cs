@@ -55,7 +55,8 @@ namespace API.Controllers {
         [HttpPut("{id}")]
         public ActionResult<KlantRESTOutputTDO> PutKlant(int id, [FromBody] KlantRESTInputTDO tdo) {
             try {
-                if(!_km.BestaatKlant(id) || tdo == null || string.IsNullOrWhiteSpace(tdo.Naam) || string.IsNullOrWhiteSpace(tdo.Adres)) {
+                if(!_km.BestaatKlant(id) || tdo == null || string.IsNullOrWhiteSpace(tdo.Naam) || 
+                    string.IsNullOrWhiteSpace(tdo.Adres)) {
                     return BadRequest();
                 }
                 Klant k = MapToDomain.MapToKlantDomain(tdo);
