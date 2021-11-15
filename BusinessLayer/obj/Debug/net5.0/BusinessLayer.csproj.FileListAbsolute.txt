@@ -9,4 +9,3 @@ C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLaye
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\ref\BusinessLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.pdb
-C:\Users\Eigenaar\KlantBestellingAPI\BusinessLayer\obj\Debug\net5.0\BusinessLayer.csproj.AssemblyReference.cache

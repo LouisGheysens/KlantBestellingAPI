@@ -65,7 +65,7 @@ namespace DataLayer.Repos {
 
         public Bestelling VoegBestellingToe(Bestelling bestelling) {
             SqlConnection conn = getConnection();
-            string sql = "INSERT INTO Bestellingen(BestellingId, KlantId, Product, Aantal) VALUES (@Id, @KlantId, @Product, @Aantal)";
+            string sql = "INSERT INTO Bestellingen(BestellingId, KlantId, Product, Aantal) OUTPUT INSERTED VALUES (@Id, @KlantId, @Product, @Aantal)";
             using(SqlCommand cmd = new(sql, conn)) {
                 try {
                     conn.Open();
@@ -77,8 +77,8 @@ namespace DataLayer.Repos {
                     cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
                     cmd.Parameters["@Product"].Value = (int)bestelling.Product;
                     cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
-                    int integer = decimal.ToInt32((decimal)cmd.ExecuteScalar());
-                    return new Bestelling(bestelling.BestellingID, (int)bestelling.Product, bestelling.Aantal, bestelling.Klant);
+                    bestelling.ZetId((int)cmd.ExecuteScalar());
+                    return bestelling;
                 }catch(Exception ex) {
                     throw new KlantRepositoryADOException("KlantRepository: VoegBestellingToe - gefaald", ex);
                 }

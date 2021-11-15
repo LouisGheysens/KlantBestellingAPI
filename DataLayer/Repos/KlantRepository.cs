@@ -110,7 +110,7 @@ namespace DataLayer.Repos {
 
         public Klant VoegKlantToe(Klant klant) {
             SqlConnection conn = getConnection();
-            string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres) SELECT SCOPE_IDENTITY()";
+            string query = "INSERT INTO Klanten(Naam, Adres) VALUES(@Naam, @Adres) SELECT SCOPE_IDENTITY();";
             using (SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
