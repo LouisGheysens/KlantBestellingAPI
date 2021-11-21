@@ -21,13 +21,15 @@ namespace API {
             Configuration = configuration;
         }
 
-        private string connectionString = @"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True";
+        //private readonly string connectionString = @"Data Source=DESKTOP-3CJB43N\SQLEXPRESS;Initial Catalog=WebAPI;Integrated Security=True"; //Origineel database
+        private readonly string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=TestDb;Integrated Security=True"; //Test Database
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddControllers();
+            //services.AddControllers(setup => setup.ReturnHttpNotAcceptable = true).AddNewtonsoftJson(); //oud
+            services.AddControllers(); //toegevoegd  //nieuw
             services.AddSingleton<IKlantRepository>(x => new KlantRepository(connectionString));
             services.AddSingleton<IBestellingRepository>(x => new BestellingRepository(connectionString));
             services.AddSingleton<KlantManager>();

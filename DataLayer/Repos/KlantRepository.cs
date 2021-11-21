@@ -48,14 +48,14 @@ namespace DataLayer.Repos {
 
         public Klant GetKlant(int id) {
             SqlConnection connection = getConnection();
-            string query = "SELECT * FROM dbo.Klanten WHERE KlantId=@Id";
+            string query = "SELECT * FROM dbo.klanten WHERE Id=@Id";
             using (SqlCommand command = new(query,connection)) {
                 try {
                     connection.Open();
                     command.Parameters.AddWithValue("@Id", id);
                     IDataReader reader = command.ExecuteReader();
                     reader.Read();
-                    Klant klant = new Klant((int)reader["KlantId"], (string)reader["Naam"], (string)reader["Adres"]);
+                    Klant klant = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
                     reader.Close();
                     return klant;
                 }
@@ -68,18 +68,21 @@ namespace DataLayer.Repos {
             }
         }
 
-        public void UpdateKlant(Klant klant) {
+        public Klant UpdateKlant(Klant klant) {
             SqlConnection conn = getConnection();
             string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE Id=@Id";
             using(SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
-                    cmd.Parameters.Add("@Naam", SqlDbType.NVarChar);
-                    cmd.Parameters.Add("@Adres", SqlDbType.NVarChar);
+                    cmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@Naam", SqlDbType.NVarChar));
+                    cmd.Parameters.Add(new SqlParameter("@Adres", SqlDbType.NVarChar));
+
                     cmd.Parameters["@Naam"].Value = klant.Naam;
                     cmd.Parameters["@Adres"].Value = klant.Adres;
                     cmd.Parameters["@Id"].Value = klant.KlantID;
                     cmd.ExecuteNonQuery();
+                    return klant;
                 }catch(Exception ex) {
                     throw new KlantRepositoryADOException("KlantRepository: UpdateKlant - gefaald!", ex);
                 }

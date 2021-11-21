@@ -15,9 +15,13 @@ namespace BusinessLayer.Managers {
         public KlantManager(IKlantRepository repo) { this.repo = repo; }
 
         public bool BestaatKlant(int id) {
-            try {
+            try 
+            {
+                if (id <= 0) throw new KlantException("KlantManager: id is 0 of onbestaand");
                 return repo.BestaatKlantId(id);
-            }catch(Exception ex) {
+            }
+            catch(Exception ex) 
+            {
                 throw new KlantException("KlantManager: BestaatKlant(id) - gefaald", ex);
             }
         }

@@ -75,7 +75,7 @@ namespace DataLayer.Repos {
                     cmd.Parameters.Add("@Aantal", SqlDbType.Int);
                     cmd.Parameters["@BestellingId"].Value = bestelling.BestellingID;
                     cmd.Parameters["@KlantId"].Value = bestelling.Klant.KlantID;
-                    cmd.Parameters["@Product"].Value = (int)bestelling.Product;
+                    cmd.Parameters["@Product"].Value = bestelling.Product;
                     cmd.Parameters["@Aantal"].Value = bestelling.Aantal;
                     bestelling.ZetId((int)cmd.ExecuteScalar());
                     return bestelling;
@@ -115,19 +115,19 @@ namespace DataLayer.Repos {
 
         public IEnumerable<Bestelling> GetBestellingKlant(int id) {
             SqlConnection conn = getConnection();
-            string sql = "SELECT * FROM klanten k INNER JOIN Bestellingen b ON K.Id = b.KlantId WHERE k.Id = @Id";
+            string sql = "SELECT * FROM bestellingen b LEFT JOIN klanten k  ON b.KlantId = k.Id WHERE k.Id = @Id";
             using(SqlCommand comm = new(sql, conn)) {
                 try {
                     conn.Open();
                     comm.Parameters.AddWithValue("@Id", id);
-                    IDataReader reader = comm.ExecuteReader();
+                    SqlDataReader reader = comm.ExecuteReader();
                     Klant k = null;
                     List<Bestelling> bestellingen = new List<Bestelling>();
                     while (reader.Read()) {
-                        if(k == null) {
-                            k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
-                        }
-                        Bestelling b = new Bestelling((int)reader["Id"], (int)reader["Product"], (int)reader["Aantal"], k);
+                        if(k == null)  k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
+                        
+                        Bestelling b = new(
+                            (int)reader["Id"], (Bier)(int)reader["Product"], (int)reader["Aantal"], k);
                         bestellingen.Add(b);
                     }
                     reader.Close();
@@ -155,7 +155,7 @@ namespace DataLayer.Repos {
                     if(k == null) {
                         k = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
                     }
-                    Bestelling b = new Bestelling((int)reader["Id"], (int)reader["Product"], (int)reader["Aantal"], k);
+                    Bestelling b = new Bestelling((int)reader["Id"], (Bier)Enum.Parse(typeof(Bier), (string)reader["Product"]), (int)reader["Aantal"], k);
                     reader.Close();
                     return b;
                 }catch(Exception ex) {

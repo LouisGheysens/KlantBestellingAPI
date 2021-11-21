@@ -9,16 +9,18 @@ namespace App {
         static void Main(string[] args) {
             Console.WriteLine("Hello World!");
 
+            string conn = @"Data Source=.\SQLEXPRESS;Initial Catalog=TestDb;Integrated Security=True";
             #region SQLQUERIES
 
-            ////Klanten
-            //Klant k = new Klant(1,"Luc", "Sint-HubertusWegel-78-Sint-Niklaas");
-            //KlantRepository kr = new KlantRepository();
-            ////kr.VoegKlantToe(k);
-            ////kr.VerwijderKlant(k);
-            ////kr.UpdateKlant(k);
-            ////kr.SelecteerKlanten();
-            ////kr.BestaatKlant(k);
+            //Klanten
+            Klant k = new Klant(1, "Luc", "Sint-HubertusWegel-78-Sint-Niklaas");
+            KlantRepository kr = new KlantRepository(conn);
+            //kr.VoegKlantToe(k); //Klopt
+            //kr.VerwijderKlant(6); //Klopt
+            //kr.UpdateKlant(k);
+            //kr.BestaatKlant(k);
+            //var x = kr.GetKlant(1);
+            //Console.WriteLine(x.ToString());
 
             ////Bestellingen
             //BestellingRepository br = new BestellingRepository();

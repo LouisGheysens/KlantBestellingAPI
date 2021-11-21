@@ -12,4 +12,3 @@ C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\bin\Debug\net5.0\BusinessLayer.pd
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\ref\DataLayer.dll
 C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.pdb
-C:\Users\Eigenaar\KlantBestellingAPI\DataLayer\obj\Debug\net5.0\DataLayer.csproj.CopyComplete

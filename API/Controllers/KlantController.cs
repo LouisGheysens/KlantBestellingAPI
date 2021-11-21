@@ -19,7 +19,7 @@ namespace API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class KlantController : ControllerBase {
-        private string url = "http://localhost:5000";
+        private string url = "http://localhost:5000/";
         private readonly BestellingManager _bm;
         private readonly KlantManager _km;
 
@@ -45,7 +45,8 @@ namespace API.Controllers {
         public ActionResult<KlantRESTOutputTDO> PostKlant([FromBody] KlantRESTInputTDO tdo) {
             try {
                 Klant k = _km.VoegKlantToe(MapToDomain.MapToKlantDomain(tdo));
-                return CreatedAtAction(nameof(GetKlant), new { id = k.KlantID }, MapFromDomain.MapFromKlantDomain(url, k, _bm));
+                return CreatedAtAction(nameof(GetKlant), new { id = k.KlantID }, 
+                    MapFromDomain.MapFromKlantDomain(url, k, _bm));
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
             }
@@ -76,6 +77,7 @@ namespace API.Controllers {
                     return BadRequest("Klant heeft nog een achterliggende bestelling");
                 }
                 _km.VerwijderKlant(id);
+                Console.WriteLine("Klant met "+  (id) + "werd verwijderd!");
                 return NoContent();
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
@@ -86,15 +88,16 @@ namespace API.Controllers {
         #region Bestelling
         //Get
         [HttpGet]
-        [Route("{id/Bestelling/{bestellingId")]
+        [Route("{id}/Bestelling/{bestellingId}")]
         public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id, int bestellingId) {
             try {
                 Bestelling b = _bm.GeefBestellingWeer(bestellingId);
-                if(b.Klant.KlantID != id) {
+                if (b.Klant.KlantID != id) {
                     return BadRequest("KlantId komt niet overeen!");
                 }
                 return Ok(MapFromDomain.MapFromBestellingDomain(url, b));
-            }catch(Exception ex) {
+            }
+            catch (Exception ex) {
                 return NotFound(ex.Message);
             }
         }
@@ -117,7 +120,7 @@ namespace API.Controllers {
 
         //Put
         [HttpPut]
-        [Route("{id}/Bestelling/{bestellingId")]
+        [Route("{id}/Bestelling/{bestellingId}")]
         public ActionResult<BestellingRESTOutputTDO> PutBestelling(int id, int bestellingId, [FromBody] BestellingRESTInputTDO tdo) {
             try {
                 if(!_bm.BestaatBestelling(id) || tdo == null) {
@@ -130,7 +133,8 @@ namespace API.Controllers {
                 Bestelling b = MapToDomain.MapToBestellingDomain(tdo, k);
                 b.ZetId(id);
                 Bestelling bestellingDB = _bm.UpdateBestelling(b);
-                return CreatedAtAction(nameof(GetBestelling), new { id = bestellingDB.Klant.KlantID, bestellingId = bestellingDB.BestellingID }, MapFromDomain.MapFromBestellingDomain(url, b));
+                return CreatedAtAction(nameof(GetBestelling), new { id = bestellingDB.Klant.KlantID, bestellingId = bestellingDB.BestellingID }, 
+                    MapFromDomain.MapFromBestellingDomain(url, b));
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
             }
@@ -138,7 +142,7 @@ namespace API.Controllers {
 
         //Delete
         [HttpDelete]
-        [Route("{id}/Bestelling/{bestellingId")]
+        [Route("{id}/Bestelling/{bestellingId}")]
         public ActionResult<BestellingRESTOutputTDO> DeleteBestelling(int id, int bestellingId) {
             try {
                 if (!_km.BestaatKlant(id)) {

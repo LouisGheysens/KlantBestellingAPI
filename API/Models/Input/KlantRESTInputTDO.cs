@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 namespace API.Models.Input {
     public class KlantRESTInputTDO {
 
-        public string Naam { get; private set; }
+        public int ID { get;  set; }
 
-        public string Adres { get; private set; }
+        public string Naam { get;  set; }
+
+        public string Adres { get;  set; }
+
+        private List<string> _bestellingen = new();
     }
 }

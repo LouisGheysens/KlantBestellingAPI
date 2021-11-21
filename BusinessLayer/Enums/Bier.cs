@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Enums {
     public enum Bier {
-        Duvel, Westmalle, Leffe, Orval
+        Duvel = 1, 
+        Westmalle = 2, 
+        Leffe = 3, 
+        Orval = 4
     }
 }

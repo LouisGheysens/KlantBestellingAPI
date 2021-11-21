@@ -10,7 +10,7 @@ namespace API.Models.Input {
 
         public int KlantId { get; private set; }
 
-        public int Product { get; private set; }
+        public Bier Product { get; private set; }
 
         public int Aantal { get; private set; }
     }

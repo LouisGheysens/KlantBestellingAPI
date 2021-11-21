@@ -13,17 +13,29 @@ namespace BusinessLayer.Models {
 
         public string Adres { get; private set; }
 
+        public List<Bestelling> _bestellingen { get; set; }
 
+        public Klant(int id, string naam, string adres, List<Bestelling> b) {
+            this._bestellingen = b;
+            Zetid(id);
+            ZetNaam(naam);
+            ZetAdres(adres);
+        }
+        public Klant(string naam, string adres, List<Bestelling> b) {
+            this._bestellingen = b;
+            ZetNaam(naam);
+            ZetAdres(adres);
+        }
         public Klant(int id, string naam, string adres) {
             Zetid(id);
             ZetNaam(naam);
             ZetAdres(adres);
         }
-
         public Klant(string naam, string adres) {
             ZetNaam(naam);
             ZetAdres(adres);
         }
+
 
 
         public void Zetid(int id) {

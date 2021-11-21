@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer {
     public class Bestelling {
-        public int BestellingID { get; private set; }
+        public int BestellingID { get; set; }
 
         public Bier Product { get; set; }
 
@@ -17,18 +17,18 @@ namespace BusinessLayer {
 
         public Klant Klant { get; set; }
 
-        public Bestelling(int id, int product, int aantal, Klant k) {
+        public Bestelling(int id, Bier product, int aantal, Klant k) {
             ZetId(id);
             ZetProduct(product);
             ZetAantal(aantal);
         }
 
-        public Bestelling(int product, int aantal, Klant k) {
+        public Bestelling(Bier product, int aantal, Klant k) {
             ZetProduct(product);
             ZetAantal(aantal);
         }
 
-        public void ZetProduct(int product) {
+        public void ZetProduct(Bier product) {
             if(!Enum.IsDefined(typeof(Bier), (Bier)product)) {
                 throw new BestellingException("Bestelling: ZetProduct - gefaald");
             }

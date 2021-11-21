@@ -41,8 +41,8 @@ C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\ref\App.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.pdb
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.genruntimeconfig.cache
-C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.csproj.CopyComplete
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.csproj.CopyComplete

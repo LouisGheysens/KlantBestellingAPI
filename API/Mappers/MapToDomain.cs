@@ -14,8 +14,9 @@ namespace API.Mappers {
         //Klant
         public static Klant MapToKlantDomain(KlantRESTInputTDO tdo) {
             try {
-                Klant klant = new Klant(tdo.Naam, tdo.Adres);
-                return klant;
+                if (tdo.ID > 0) return new Klant(tdo.ID, tdo.Naam, tdo.Adres);
+                return new Klant(tdo.Naam, tdo.Adres);
+                 
             }catch(Exception ex) {
                 throw new MapException("MapToDomain: MapToKlantDomain - gefaald!", ex);
             }
@@ -24,7 +25,7 @@ namespace API.Mappers {
         //Bestelling
         public static Bestelling MapToBestellingDomain(BestellingRESTInputTDO tdo, Klant k) {
             try {
-                Bestelling bestelling = new Bestelling(tdo.Product, tdo.Aantal, k);
+                Bestelling bestelling = new(tdo.Product, tdo.Aantal, k);
                 return bestelling;
             }
             catch (Exception ex) {
