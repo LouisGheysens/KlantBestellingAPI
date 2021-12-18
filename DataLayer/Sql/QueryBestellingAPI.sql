@@ -3,5 +3,5 @@ Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 KlantId INT NOT NULL,
 Product INT NOT NULL,
 Aantal INT NOT NULL,
-CONSTRAINT [FK_Bestelling_Klant] FOREIGN KEY (KlantId) REFERENCES klanten(Id)
+CONSTRAINT [FK_Bestelling_Klant] FOREIGN KEY (KlantId) REFERENCES klanten(KlantId)
 );

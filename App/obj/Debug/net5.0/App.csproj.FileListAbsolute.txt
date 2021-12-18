@@ -7,6 +7,8 @@ C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\ref\App.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\App.pdb
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Azure.Core.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Azure.Identity.dll
+C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.Data.SqlClient.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.Identity.Client.dll
@@ -16,6 +18,8 @@ C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.IdentityMode
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\System.Runtime.Caching.dll
@@ -41,8 +45,4 @@ C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\ref\App.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.pdb
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.genruntimeconfig.cache
-C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
-C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
-C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.dll
-C:\Users\Eigenaar\KlantBestellingAPI\App\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
 C:\Users\Eigenaar\KlantBestellingAPI\App\obj\Debug\net5.0\App.csproj.CopyComplete

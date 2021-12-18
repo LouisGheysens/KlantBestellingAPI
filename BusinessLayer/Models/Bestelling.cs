@@ -17,18 +17,32 @@ namespace BusinessLayer {
 
         public Klant Klant { get; set; }
 
-        public Bestelling(int id, Bier product, int aantal, Klant k) {
+        public Bestelling(int id, int product, int aantal, Klant klant) : this(product, aantal, klant) {
             ZetId(id);
+        }
+        public Bestelling(int product, int aantal, Klant klant) {
             ZetProduct(product);
             ZetAantal(aantal);
+            ZetKlant(klant);
         }
 
-        public Bestelling(Bier product, int aantal, Klant k) {
-            ZetProduct(product);
-            ZetAantal(aantal);
+
+        public void VerwijderKlant() {
+            Klant = null;
+        }
+        public void ZetKlant(Klant newKlant) {
+
+            if (newKlant == null) throw new BestellingException("Bestelling - invalid klant");
+            if (newKlant == Klant) throw new BestellingException("Bestelling - ZetKlant - not new");
+            if (Klant != null)
+                if (Klant.HeeftBestelling(this))
+                    Klant.VerwijderBestelling(this);
+            if (!newKlant.HeeftBestelling(this))
+                newKlant.VoegToeBestelling(this);
+            Klant = newKlant;
         }
 
-        public void ZetProduct(Bier product) {
+        public void ZetProduct(int product) {
             if(!Enum.IsDefined(typeof(Bier), (Bier)product)) {
                 throw new BestellingException("Bestelling: ZetProduct - gefaald");
             }

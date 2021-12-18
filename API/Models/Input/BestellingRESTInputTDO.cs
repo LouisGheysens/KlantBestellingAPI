@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace API.Models.Input {
     public class BestellingRESTInputTDO {
 
-        public int KlantId { get; private set; }
+        public int Aantal { get; set; }
 
-        public Bier Product { get; private set; }
+        public int KlantId { get; set; }
 
-        public int Aantal { get; private set; }
+        public int Product { get; set; }
     }
 }

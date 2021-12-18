@@ -48,7 +48,7 @@ namespace API.Controllers {
                 return CreatedAtAction(nameof(GetKlant), new { id = k.KlantID }, 
                     MapFromDomain.MapFromKlantDomain(url, k, _bm));
             }catch(Exception ex) {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.Message); 
             }
         }
 
@@ -77,13 +77,15 @@ namespace API.Controllers {
                     return BadRequest("Klant heeft nog een achterliggende bestelling");
                 }
                 _km.VerwijderKlant(id);
-                Console.WriteLine("Klant met "+  (id) + "werd verwijderd!");
-                return NoContent();
+                return Ok("Klant werd  verwijderd!");
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
         #endregion
+
+
+
 
         #region Bestelling
         //Get
@@ -91,11 +93,11 @@ namespace API.Controllers {
         [Route("{id}/Bestelling/{bestellingId}")]
         public ActionResult<BestellingRESTOutputTDO> GetBestelling(int id, int bestellingId) {
             try {
-                Bestelling b = _bm.GeefBestellingWeer(bestellingId);
-                if (b.Klant.KlantID != id) {
+                Bestelling bestelling = _bm.GeefBestellingWeer(id, bestellingId);
+                if(bestelling.Klant.KlantID != id) {
                     return BadRequest("KlantId komt niet overeen!");
                 }
-                return Ok(MapFromDomain.MapFromBestellingDomain(url, b));
+                return Ok(MapFromDomain.MapFromBestellingDomain(url, bestelling));
             }
             catch (Exception ex) {
                 return NotFound(ex.Message);
@@ -123,7 +125,7 @@ namespace API.Controllers {
         [Route("{id}/Bestelling/{bestellingId}")]
         public ActionResult<BestellingRESTOutputTDO> PutBestelling(int id, int bestellingId, [FromBody] BestellingRESTInputTDO tdo) {
             try {
-                if(!_bm.BestaatBestelling(id) || tdo == null) {
+                if(!_bm.BestaatBestellingBijKlant(id) || tdo == null) {
                     return BadRequest();
                 }
                 Klant k = _km.GetKlant(id);
@@ -132,8 +134,9 @@ namespace API.Controllers {
                 }
                 Bestelling b = MapToDomain.MapToBestellingDomain(tdo, k);
                 b.ZetId(id);
-                Bestelling bestellingDB = _bm.UpdateBestelling(b);
-                return CreatedAtAction(nameof(GetBestelling), new { id = bestellingDB.Klant.KlantID, bestellingId = bestellingDB.BestellingID }, 
+                Bestelling bestellingDB = _bm.UpdateBestelling(id, b);
+                return CreatedAtAction(nameof(GetBestelling), new 
+                { id = bestellingDB.Klant.KlantID, bestellingId = bestellingDB.BestellingID }, 
                     MapFromDomain.MapFromBestellingDomain(url, b));
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
@@ -149,7 +152,7 @@ namespace API.Controllers {
                     return BadRequest("Klant bestaat niet!");
                 }
                 _bm.VerwijderBestelling(bestellingId);
-                return NoContent();
+                return Ok("Bestelling werd verwijderd");
             }catch(Exception ex) {
                 return BadRequest(ex.Message);
             }

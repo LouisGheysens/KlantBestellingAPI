@@ -13,7 +13,7 @@ namespace BusinessLayer.Models {
 
         public string Adres { get; private set; }
 
-        public List<Bestelling> _bestellingen { get; set; }
+        List<Bestelling> _bestellingen = new List<Bestelling>();
 
         public Klant(int id, string naam, string adres, List<Bestelling> b) {
             this._bestellingen = b;
@@ -35,9 +35,6 @@ namespace BusinessLayer.Models {
             ZetNaam(naam);
             ZetAdres(adres);
         }
-
-
-
         public void Zetid(int id) {
             if (id <= 0) throw new KlantException("Klant - ZetId - ID klopt niet!");
             this.KlantID = id;
@@ -55,6 +52,34 @@ namespace BusinessLayer.Models {
 
         public override string ToString() {
             return $"{KlantID}\n{Naam}\n{Adres}";
+        }
+
+
+        public void VerwijderBestelling(Bestelling bestelling) {
+            if (bestelling == null) throw new KlantException("Klant : VerwijderBestelling - bestelling is null");
+            if (!_bestellingen.Contains(bestelling)) {
+                throw new KlantException("Klant : RemoveBestelling - bestelling does not exists");
+            }
+            else {
+                if (bestelling.Klant == this)
+                    bestelling.VerwijderKlant();
+            }
+        }
+
+        public void VoegToeBestelling(Bestelling bestelling) {
+            if (bestelling == null) throw new KlantException("Klant : VerwijderBestelling - bestelling is null");
+            if (_bestellingen.Contains(bestelling)) {
+                throw new KlantException("Klant : AddBestelling - bestelling already exists");
+            }
+            else {
+                _bestellingen.Add(bestelling);
+                if (bestelling.Klant != this)
+                    bestelling.ZetKlant(this);
+            }
+        }
+        public bool HeeftBestelling(Bestelling bestelling) {
+            if (_bestellingen.Contains(bestelling)) return true;
+            else return false;
         }
     }
 }

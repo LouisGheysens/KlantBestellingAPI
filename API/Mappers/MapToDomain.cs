@@ -2,7 +2,10 @@
 using API.Models.Input;
 using API.Models.Output;
 using BusinessLayer;
+using BusinessLayer.Enums;
+using BusinessLayer.Managers;
 using BusinessLayer.Models;
+using DataLayer.Repos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +17,8 @@ namespace API.Mappers {
         //Klant
         public static Klant MapToKlantDomain(KlantRESTInputTDO tdo) {
             try {
-                if (tdo.ID > 0) return new Klant(tdo.ID, tdo.Naam, tdo.Adres);
-                return new Klant(tdo.Naam, tdo.Adres);
+                Klant k = new Klant(tdo.Naam, tdo.Adres);
+                return k;
                  
             }catch(Exception ex) {
                 throw new MapException("MapToDomain: MapToKlantDomain - gefaald!", ex);
@@ -25,8 +28,8 @@ namespace API.Mappers {
         //Bestelling
         public static Bestelling MapToBestellingDomain(BestellingRESTInputTDO tdo, Klant k) {
             try {
-                Bestelling bestelling = new(tdo.Product, tdo.Aantal, k);
-                return bestelling;
+                Bestelling bes = new (tdo.Product, tdo.Aantal, k);
+                return bes;
             }
             catch (Exception ex) {
                 throw new MapException("MapToDomain: MapToBestellingDomain - gefaald!", ex);

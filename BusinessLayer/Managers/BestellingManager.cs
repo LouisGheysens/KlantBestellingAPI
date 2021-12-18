@@ -14,28 +14,23 @@ namespace BusinessLayer.Managers {
         public BestellingManager(IBestellingRepository repo) { this.repo = repo; }
 
         public bool BestaatBestelling(Bestelling bestelling) {
-            if (bestelling == null) throw new BestellingException("BestellingManager - BestaatBestelling - Bestelling is null!");
-            switch (bestelling.BestellingID) {
-                case <= 0:
-                    return false;
-                default:
-                    return false;
-            }
+            return repo.BestaatBestelling(bestelling);
         }
 
-
-        public bool BestaatBestelling(int id) {
-            switch (id) {
-                case <= 0:
-                    return false;
-                default:
-                    return false;
-            }
-        }
-
-        public Bestelling GeefBestellingWeer(int id) {
+        public IEnumerable<Bestelling> GetBestellingKlant(int id) {
             try {
-                return repo.GeefBestellingWeer(id);
+                if (id <= 0) throw new BestellingException("BestellingManager: GetBestellingKlant - Id is kleiner of gelijk aan 0!");
+                return repo.GetBestellingKlant(id);
+            }
+            catch (Exception ex) {
+                throw new BestellingException("BestellingManager: GetBestellingKlant(id) - gefaald", ex);
+            }
+        }
+
+
+        public Bestelling GeefBestellingWeer(int id, int klantID) {
+            try {
+                return repo.GeefBestellingWeer(id, klantID);
             }catch(Exception ex) {
                 throw new BestellingException("BestellingManager: GeefBestellingWeer(id) - failed", ex);
             }
@@ -49,28 +44,24 @@ namespace BusinessLayer.Managers {
             }
         }
 
-        public IEnumerable<Bestelling> GetBestellingKlant(int id) {
-            try {
-                if (id <= 0) throw new BestellingException("BestellingManager: GetBestellingKlant - Id is kleiner of gelijk aan 0!");
-                return repo.GetBestellingKlant(id);
-            }catch(Exception ex) {
-                throw new BestellingException("BestellingManager: GetBestellingKlant(id) - gefaald", ex);
+
+        public Bestelling UpdateBestelling(int id, Bestelling bestelling) {
+            if (bestelling == null) {
+                throw new BestellingException("Bestelling is null.");
             }
-        }
-
-        public Bestelling UpdateBestelling(Bestelling bestelling) {
-
-                if (bestelling == null) throw new BestellingException("BestellingManager: UpdateBestelling - bestelling is null");
-                if (!repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager: UpdateBestelling - bestelling bestaat niet!");
-                Bestelling bestelDatabaseObject = GeefBestellingWeer(bestelling.BestellingID);
-                if (bestelDatabaseObject == bestelling) throw new BestellingException("BestellingManager: UpdateBestelling - geen verschillen!");
-                repo.UpdateBestelling(bestelling);
-                return bestelling;
+            if (!repo.BestaatBestellingBijKlant(bestelling.BestellingID)) {
+                throw new BestellingException("Bestelling bestaat niet.");
+            }
+            Bestelling bestellingDb = GeefBestellingWeer(id, bestelling.BestellingID);
+            if (bestellingDb == bestelling) {
+                throw new BestellingException("Er zijn geen verschillen met het origineel.");
+            }
+            repo.UpdateBestelling(bestelling);
+            return bestelling;
         }
 
         public void VerwijderBestelling(int bestellingId) {
             try {
-                if (bestellingId <= 0) throw new BestellingException("BestellingManager - VerwijderBestellingToe - Bestelling is null!");
                 if (!repo.BestaatBestellingBijKlant(bestellingId)) throw new BestellingException("BestellingManager - VerwijderBestelling - Bestelling bestaat niet");
                 else
                     repo.VerwijderBestelling(bestellingId);
@@ -83,7 +74,6 @@ namespace BusinessLayer.Managers {
         public Bestelling VoegBestellingToe(Bestelling bestelling) {
             try {
                 if (bestelling == null) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling is null!");
-                if (repo.BestaatBestelling(bestelling)) throw new BestellingException("BestellingManager - VoegBestellingToe - Bestelling bestaat al");
                 else
                     return repo.VoegBestellingToe(bestelling);
             }

@@ -27,18 +27,18 @@ namespace DataLayer.Repos {
 
         public bool BestaatKlantId(int id) {
             SqlConnection conn = getConnection();
-            string query = "SELECT COUNT(*) FROM klanten WHERE Id=@Id";
+            string query = "SELECT COUNT(*) FROM klanten WHERE KlantId=@KlantId";
             using (SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.Parameters.AddWithValue("@KlantId", id);
                     int r = (int)cmd.ExecuteScalar();
                     if(r > 0) {
                         return true;
                     }
                     return false;
                 }catch(Exception ex) {
-                    throw new KlantRepositoryADOException("KlantRepository: BestaatKlatnId(id) - gefaald", ex);
+                    throw new KlantRepositoryADOException("KlantRepository: BestaatKlantId(id) - gefaald", ex);
                 }
                 finally {
                     conn.Close();
@@ -48,14 +48,14 @@ namespace DataLayer.Repos {
 
         public Klant GetKlant(int id) {
             SqlConnection connection = getConnection();
-            string query = "SELECT * FROM dbo.klanten WHERE Id=@Id";
+            string query = "SELECT * FROM dbo.klanten WHERE KlantId=@KlantId";
             using (SqlCommand command = new(query,connection)) {
                 try {
                     connection.Open();
-                    command.Parameters.AddWithValue("@Id", id);
+                    command.Parameters.AddWithValue("@KlantId", id);
                     IDataReader reader = command.ExecuteReader();
                     reader.Read();
-                    Klant klant = new Klant((int)reader["Id"], (string)reader["Naam"], (string)reader["Adres"]);
+                    Klant klant = new Klant((int)reader["KlantId"], (string)reader["Naam"], (string)reader["Adres"]);
                     reader.Close();
                     return klant;
                 }
@@ -70,17 +70,17 @@ namespace DataLayer.Repos {
 
         public Klant UpdateKlant(Klant klant) {
             SqlConnection conn = getConnection();
-            string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE Id=@Id";
+            string query = "UPDATE Klanten SET Naam=@Naam, Adres=@Adres WHERE KlantId=@KlantId";
             using(SqlCommand cmd = new(query, conn)) {
                 try {
                     conn.Open();
-                    cmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@KlantId", SqlDbType.Int));
                     cmd.Parameters.Add(new SqlParameter("@Naam", SqlDbType.NVarChar));
                     cmd.Parameters.Add(new SqlParameter("@Adres", SqlDbType.NVarChar));
 
                     cmd.Parameters["@Naam"].Value = klant.Naam;
                     cmd.Parameters["@Adres"].Value = klant.Adres;
-                    cmd.Parameters["@Id"].Value = klant.KlantID;
+                    cmd.Parameters["@KlantId"].Value = klant.KlantID;
                     cmd.ExecuteNonQuery();
                     return klant;
                 }catch(Exception ex) {
@@ -95,11 +95,11 @@ namespace DataLayer.Repos {
         //Klopt!
         public void VerwijderKlant(int id) {
             SqlConnection conn = getConnection();
-            string query = "DELETE FROM Klanten WHERE Id=@Id";
+            string query = "DELETE FROM klanten WHERE KlantId=@KlantId";
             using (SqlCommand comm = new(query, conn)) {
                 try {
                     conn.Open();
-                    comm.Parameters.AddWithValue("@Id", id);
+                    comm.Parameters.AddWithValue("@KlantId", id);
                     comm.ExecuteNonQuery();
                 }
                 catch (Exception ex) {

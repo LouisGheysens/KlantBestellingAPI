@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Exceptions;
 using BusinessLayer;
+using DataLayer.Repos;
 
 namespace API.Mappers {
     public static class MapFromDomain {
@@ -14,8 +15,7 @@ namespace API.Mappers {
         public static KlantRESTOutputTDO MapFromKlantDomain(string url, Klant klant, BestellingManager bmanager) {
             try {
                 string klantURL = $"{url}/klant/{klant.KlantID}";
-                //List<string> bestellingen = bmanager.GetBestellingKlant(klant.KlantID).Select(x => klantURL = $"/Bestelling/{x.BestellingID}").ToList(); //oud
-                List<string> bestellingen = bmanager.GetBestellingKlant(klant.KlantID).Select(x =>  $"{klantURL}/Bestelling/{x.BestellingID}").ToList();
+                List<string> bestellingen = bmanager.GetBestellingKlant(klant.KlantID).Select(x => klantURL + $"/Bestelling/{x.BestellingID}").ToList(); ;
                 KlantRESTOutputTDO klantREST = new(klantURL, klant.Naam, klant.Adres, bestellingen);
                 return klantREST;
             }
@@ -25,13 +25,13 @@ namespace API.Mappers {
             }
         }
 
-        //Bestellling
-        public static BestellingRESTOutputTDO MapFromBestellingDomain(string url, Bestelling best) {
+
+        public static BestellingRESTOutputTDO MapFromBestellingDomain(string url, Bestelling beste) {
             try {
-                string klantUrl = $"{url}/klant/{best.Klant.KlantID}";
-                string bestelUrl = klantUrl + $"/Bestelling/{best.BestellingID}";
-                BestellingRESTOutputTDO bestelREST = new(bestelUrl, klantUrl, best.Product.ToString(), best.Aantal);
-                return bestelREST;
+                string Klanturl = $"{ url}/klant/{beste.Klant.KlantID}";
+                string bestellingUrl = Klanturl + $"/Bestelling/{beste.BestellingID}";
+                BestellingRESTOutputTDO bestellingRESTOutputDTO = new(bestellingUrl, Klanturl, beste.Product.ToString(), beste.Aantal);
+                return bestellingRESTOutputDTO;
             }
             catch (Exception ex) {
 

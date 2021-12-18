@@ -16,17 +16,17 @@ namespace App {
             Klant k = new Klant(1, "Luc", "Sint-HubertusWegel-78-Sint-Niklaas");
             KlantRepository kr = new KlantRepository(conn);
             //kr.VoegKlantToe(k); //Klopt
-            //kr.VerwijderKlant(6); //Klopt
+            //kr.VerwijderKlant(13); //Klopt
             //kr.UpdateKlant(k);
-            //kr.BestaatKlant(k);
+            //kr.BestaatKlant(k.KlantId);
             //var x = kr.GetKlant(1);
             //Console.WriteLine(x.ToString());
 
-            ////Bestellingen
-            //BestellingRepository br = new BestellingRepository();
-            //Bestelling b = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Luigi", "Patershol-3-Gent"));
-            //Bestelling bt = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Patje", "Korenlei-56-Zottegem"));
-            ////br.VoegBestellingToe(b);
+            //Bestellingen
+            BestellingRepository br = new BestellingRepository(conn);
+            Bestelling b = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Luigi", "Patershol-3-Gent"));
+            Bestelling bt = new Bestelling(BusinessLayer.Enums.Bier.Orval, 4, new Klant("Patje", "Korenlei-56-Zottegem"));
+            br.VoegBestellingToe(b);
             ////br.BestaatBestelling(bt);
             ////br.VoegBestellingToe(bt);
             ////br.VerwijderBestelling(b);

@@ -13,9 +13,11 @@ namespace BusinessLayer.Interfaces {
         void UpdateBestelling(Bestelling bestelling);
         IEnumerable<Bestelling> GetBestellingKlant(int BestellingId);
         bool BestaatBestellingBijKlant(int BestellingId);
-        Bestelling GeefBestellingWeer(int id);
+        Bestelling GeefBestellingWeer(int id, int klantID);
         bool BestaatBestelling(Bestelling bestelling);
+        bool BestaatBestelling(int id);
         bool HeeftBestelling(int id);
+        bool HeeftBestellingenKlant(int id);
     }
 
 
